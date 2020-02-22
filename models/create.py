@@ -1,7 +1,28 @@
+import getpass
 import pandas
+from sqlalchemy import create_engine
 
 ###############################################################################
 # "Public" Functions
+
+# To skip entering username and password, supply them to this function.
+def engine(user=None, passwd=None, hostname="localhost", db="aperature", verbose=False):
+    if user is None:
+        user = _get_name()
+
+    if passwd is None:
+        passwd = _get_passwd()
+
+    engine_info = ["postgresql://", user, ":", passwd, "@", hostname, "/", db]
+    engine = create_engine("".join(engine_info))
+
+    if verbose:
+        print("Your engine has been created: ", end = "")
+        print(engine)
+
+    return engine
+
+###########################################################
 
 # TODO: see what happens if this runs on windows since '/'
 #   could also check which OS it is and use the correct slash
@@ -80,4 +101,24 @@ def _create_ctran_table(conn):
             """)
 
     return True
+
+###########################################################
+
+def _get_name():
+    while True:
+        try:
+            user = input("Enter username: ")
+            return user
+        except EOFError:
+            print()
+
+###########################################################
+
+def _get_passwd():
+    while True:
+        try:
+            passwd = getpass.getpass("Enter password: ")
+            return passwd
+        except EOFError:
+            print()
 

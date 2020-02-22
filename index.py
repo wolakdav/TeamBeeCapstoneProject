@@ -1,4 +1,3 @@
-import models.engine
 import models.create
 import models.delete
 
@@ -75,6 +74,6 @@ def _handle_switch_case(option, engine):
 
 if __name__ == "__main__":
     # To skip entering username and password, supply them to this function.
-    my_engine = models.engine.create()
+    my_engine = models.create.engine()
     cli(my_engine)
 
