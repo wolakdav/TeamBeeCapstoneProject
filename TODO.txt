@@ -3,3 +3,5 @@ grep -nr TODO *
 
 Also, revisit this codebase.
 
+Consider what will happen if there is no postgres server, or no db called aperature
+
