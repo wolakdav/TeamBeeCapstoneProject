@@ -2,5 +2,8 @@
 Repository for Portland State University Winter-Spring Team Bees capstone project 
 
 ## Setup
-To run, install the pip package 'pipenv'. Then, in this repo's top directory, run 'pipenv shell' to activate the virtual environment. Next, install the dependencies locally with 'pipenv install'. To exit, type 'exit'.
-
+### Python Dependencies
+1) `pip3 install pipenv`: If not installed, install pipenv to the machine.
+2) `pipenv shell`: Activate the virtual environment while the working directory is the root directory of this repo.
+3) `pipenv install`: With the shell active, install all of the dependencies; this is only needed after a fresh clone.
+4) `pipenv exit`: Deactivate the virtual environment.
