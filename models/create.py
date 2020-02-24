@@ -29,6 +29,7 @@ def engine(user=None, passwd=None, hostname="localhost", db="aperature", verbose
 # TODO: send this a faulty engine, and one without permissions
 # TODO: see what exceptions can be thrown by conn
 # exception: psycopg2.errors.AdminShutdown
+# exception: sqlalchemy.exc.OperationalError:
 def ctran_data(engine, ctran_sample_path="models/assets/", verbose=True):
     if verbose:
         print("Loading ctran_trips_sample.csv")
