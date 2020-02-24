@@ -47,7 +47,7 @@ def ctran_data(engine, ctran_sample_path="models/assets/", verbose=True):
 
     if verbose:
         print("Writing sample data to table.")
-        print("\tThis will take a minute or two.")
+        print("\tThis will take a minute or three.")
 
     sample_df.to_sql(
             "ctran_data",

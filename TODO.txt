@@ -5,3 +5,4 @@ Also, revisit this codebase.
 
 Consider what will happen if there is no postgres server, or no db called aperature
 
+Update to pep8
