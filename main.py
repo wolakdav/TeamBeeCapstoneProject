@@ -1,20 +1,24 @@
 
 ###############################################################################
-# "Public" Functions
+# Public Functions
 
 def cli():
     shouldExit = False
+    options = [
+            "(or ctrl-d) Exit."
+            ]
 
     while not shouldExit:
         print()
         print("This is the StopSpot data pipeline. Please select what you would like to do:")
         print()
-        print("0 (or ctrl-d): Exit.")
+        for i in range(len(options)):
+            print(str(i) + ": " + options[i])
         print()
 
         option = None
         try:
-            option = _get_int(0, 0)
+            option = _get_int(0, len(options)-1)
         except EOFError:
             option = 0
 
@@ -59,4 +63,3 @@ def _handle_switch_case(option):
 
 if __name__ == "__main__":
     cli()
-
