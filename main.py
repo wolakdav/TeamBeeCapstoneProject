@@ -1,5 +1,5 @@
-import models.create
-import models.delete
+import src.database_operations.create as db_create
+import src.database_operations.delete as db_delete
 
 
 ###############################################################################
@@ -56,11 +56,11 @@ def _handle_switch_case(option, engine):
         print(engine)
 
     elif option == 2:
-        if not models.create.ctran_data(engine):
+        if not db_create.ctran_data(engine):
             print("WARNING: an error occurred whlie building the ctran data.")
 
     elif option == 3:
-        if not models.delete.ctran_data(engine):
+        if not db_delete.ctran_data(engine):
             print("WARNING: an error occurred whlie deleting the ctran data.")
 
     else:
@@ -74,6 +74,7 @@ def _handle_switch_case(option, engine):
 
 if __name__ == "__main__":
     # To skip entering username and password, supply them to this function.
-    my_engine = models.create.engine(hostname="db.cecs.pdx.edu", db="databees")
+    #my_engine = db_create.engine(hostname="db.cecs.pdx.edu", db="databees")
+    my_engine = db_create.engine()
     cli(my_engine)
 

@@ -30,11 +30,11 @@ def engine(user=None, passwd=None, hostname="localhost", db="aperature", verbose
 # TODO: see what exceptions can be thrown by conn
 # exception: psycopg2.errors.AdminShutdown
 # exception: sqlalchemy.exc.OperationalError:
-def ctran_data(engine, ctran_sample_path="models/assets/", verbose=True):
+def ctran_data(engine, ctran_sample_path="assets", verbose=True):
     if verbose:
         print("Loading ctran_trips_sample.csv")
 
-    sample_df = pandas.read_csv(ctran_sample_path + "ctran_trips_sample.csv", parse_dates=["service_date"])
+    sample_df = pandas.read_csv(ctran_sample_path + "/ctran_trips_sample.csv", parse_dates=["service_date"])
 
     with engine.connect() as conn:
         if verbose:

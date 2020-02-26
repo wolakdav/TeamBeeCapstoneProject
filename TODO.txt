@@ -1,20 +1,11 @@
 
 grep -nr TODO *
 
-Also, revisit this codebase.
+Also, debug/reconsider this codebase.
 
-Consider what will happen if there is no postgres server, or no db called aperature
+Consider what will happen if there is no postgres server, or no db under supplied name
 
-
-
-revamp to use the usual test/ src/ etc
-
-have CLI put into main.py
+add query functionality to cli
 
 add unit tests
-
-add pipenv stuff to dev
-  and pytest
-
-touch up ERD in requirements
 
