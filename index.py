@@ -74,6 +74,6 @@ def _handle_switch_case(option, engine):
 
 if __name__ == "__main__":
     # To skip entering username and password, supply them to this function.
-    my_engine = models.create.engine()
+    my_engine = models.create.engine(hostname="db.cecs.pdx.edu", db="databees")
     cli(my_engine)
 
