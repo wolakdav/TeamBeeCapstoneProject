@@ -11,6 +11,7 @@ def cli():
         "Print engine.",
         "Create ctran_data table.",
         "Delete ctran_data table.",
+        "Query ctran_data and print ctran_data.info().",
     ]
 
     while not shouldExit:
@@ -68,6 +69,10 @@ def _handle_switch_case(option, database):
     elif option == 3:
         if not database.delete_ctran_data():
             print("WARNING: an error occurred whlie deleting the ctran data.")
+
+    elif option == 4:
+        query = database.get_ctran_data()
+        query.info()
 
     else:
         raise RuntimeError("A case that should not be reached has been reached.")
