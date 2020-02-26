@@ -1,30 +1,33 @@
-import src.database_operations.create as db_create
-import src.database_operations.delete as db_delete
-
+from src.database import Database
 
 ###############################################################################
 # Functions
 
-def cli(engine):
+def cli():
+    aperature = Database()
     shouldExit = False
+    options = [
+        "(or ctrl-d) Exit.",
+        "Print engine.",
+        "Create ctran_data table.",
+        "Delete ctran_data table.",
+    ]
 
     while not shouldExit:
         print()
         print("This is the StopSpot data pipeline. Please select what you would like to do:")
         print()
-        print("0 (or ctrl-d): Exit.")
-        print("1: Print engine.")
-        print("2: Create ctran_data table.")
-        print("3: Delete ctran_data table.")
+        for i in range(len(options)):
+            print(str(i) + ": " + options[i])
         print()
 
         option = None
         try:
-            option = _get_int(0, 3)
+            option = _get_int(0, len(options)-1)
         except EOFError:
             option = 0
 
-        shouldExit = _handle_switch_case(option, engine)
+        shouldExit = _handle_switch_case(option, aperature)
 
 ###########################################################
 
@@ -47,20 +50,23 @@ def _get_int(min_value, max_value, cli_symbol="> "):
 
 ###########################################################
 
-def _handle_switch_case(option, engine):
+def _handle_switch_case(option, database):
     if option == 0:
         print()
         return True
 
     elif option == 1:
-        print(engine)
+        print(database.get_engine())
 
     elif option == 2:
-        if not db_create.ctran_data(engine):
+        old_value = database.verbose
+        database.verbose = True
+        if not database.create_ctran_data():
             print("WARNING: an error occurred whlie building the ctran data.")
+        database.verbose = old_value
 
     elif option == 3:
-        if not db_delete.ctran_data(engine):
+        if not database.delete_ctran_data():
             print("WARNING: an error occurred whlie deleting the ctran data.")
 
     else:
@@ -75,6 +81,4 @@ def _handle_switch_case(option, engine):
 if __name__ == "__main__":
     # To skip entering username and password, supply them to this function.
     #my_engine = db_create.engine(hostname="db.cecs.pdx.edu", db="databees")
-    my_engine = db_create.engine()
-    cli(my_engine)
-
+    cli()
