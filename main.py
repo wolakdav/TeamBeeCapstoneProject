@@ -1,14 +1,18 @@
-from src.database import Database
+# TODO: put table.py and ctran_data.py in src/databases/
+# TODO: give sw23 root permissions on postgres
+from ctran_data import CTran_Data
 
 ###############################################################################
 # Functions
 
 def cli():
-    aperature = Database()
+    portal = CTran_Data()
     shouldExit = False
     options = [
         "(or ctrl-d) Exit.",
         "Print engine.",
+        "Create portal schema.",
+        "Delete portal schema.",
         "Create ctran_data table.",
         "Delete ctran_data table.",
         "Query ctran_data and print ctran_data.info().",
@@ -28,7 +32,7 @@ def cli():
         except EOFError:
             option = 0
 
-        shouldExit = _handle_switch_case(option, aperature)
+        shouldExit = _handle_switch_case(option, portal)
 
 ###########################################################
 
@@ -51,27 +55,33 @@ def _get_int(min_value, max_value, cli_symbol="> "):
 
 ###########################################################
 
-def _handle_switch_case(option, database):
+def _handle_switch_case(option, portal):
     if option == 0:
         print()
         return True
 
     elif option == 1:
-        print(database.get_engine())
+        portal.print_engine()
 
     elif option == 2:
-        old_value = database.verbose
-        database.verbose = True
-        if not database.create_ctran_data():
-            print("WARNING: an error occurred whlie building the ctran data.")
-        database.verbose = old_value
+        portal.create_schema()
 
     elif option == 3:
-        if not database.delete_ctran_data():
-            print("WARNING: an error occurred whlie deleting the ctran data.")
+        portal.delete_schema()
 
     elif option == 4:
-        query = database.get_ctran_data()
+        old_value = portal.verbose
+        portal.verbose = True
+        if not portal.create_table():
+            print("WARNING: an error occurred whlie building the ctran data.")
+        portal.verbose = old_value
+
+    elif option == 5:
+        if not portal.delete_table():
+            print("WARNING: an error occurred whlie deleting the ctran data.")
+
+    elif option == 6:
+        query = portal.get_full_table()
         query.info()
 
     else:
