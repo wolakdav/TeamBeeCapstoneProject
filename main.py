@@ -1,5 +1,3 @@
-# TODO: put table.py and ctran_data.py in src/databases/
-# TODO: put table.py and ctran_data.py into src w/ init file
 # TODO: build unit tests; see Nelson's test suite branch when pushed.
 from src.tables.ctran_data import CTran_Data
 
