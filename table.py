@@ -1,3 +1,9 @@
+""" Perform assumption checking
+# TODO: send this a faulty engine, and one without permissions
+# TODO: see what exceptions can be thrown by conn
+# exception: psycopg2.errors.AdminShutdown
+# exception: sqlalchemy.exc.OperationalError
+"""
 import abc
 import getpass
 import pandas
@@ -73,19 +79,13 @@ class Table(abc.ABC):
         self._print("Connecting to DB.")
         with self._engine.connect() as conn:
             self._print("Deleting schema ", self._schema)
-            conn.execute("".join(["DROP SCHEMA IF EXISTS ", self._schema, ";"]))
+            conn.execute("".join(["DROP SCHEMA IF EXISTS ", self._schema, " CASCADE;"]))
 
         self._print("Done.")
         return True
 
     #######################################################
     
-    # TODO: see what happens if this runs on windows since '/'
-    #   could also check which OS it is and use the correct slash
-    # TODO: send this a faulty engine, and one without permissions
-    # TODO: see what exceptions can be thrown by conn
-    # exception: psycopg2.errors.AdminShutdown
-    # exception: sqlalchemy.exc.OperationalError
     def create_table(self):
         self._print("Connecting to DB.")
         with self._engine.connect() as conn:
