@@ -1,7 +1,7 @@
 # TODO: put table.py and ctran_data.py in src/databases/
 # TODO: put table.py and ctran_data.py into src w/ init file
 # TODO: build unit tests; see Nelson's test suite branch when pushed.
-from tables.ctran_data import CTran_Data
+from src.tables.ctran_data import CTran_Data
 
 ###############################################################################
 # Functions
@@ -95,6 +95,4 @@ def _handle_switch_case(option, portal):
 # Main
 
 if __name__ == "__main__":
-    # To skip entering username and password, supply them to this function.
-    #my_engine = db_create.engine(hostname="db.cecs.pdx.edu", db="databees")
     cli()
