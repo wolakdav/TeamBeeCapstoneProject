@@ -1,19 +1,36 @@
 
+##############################################################################
+# Private Classes
+
+class _Option():
+    # funcPointer should return str "Exit" iff that option should cause main to
+    # exit.
+    def __init__(self, msg, funcPointer):
+        self.msg = msg
+        self.funcPointer = funcPointer
+
+
 ###############################################################################
 # Public Functions
 
 def cli():
+    def ctran_info():
+        query = ctran.get_full_table()
+        query.info()
+
     shouldExit = False
     options = [
-            "(or ctrl-d) Exit."
-            ]
+        _Option("(or ctrl-d) Exit.", lambda: "Exit"),
+    ]
 
     while not shouldExit:
         print()
         print("This is the StopSpot data pipeline. Please select what you would like to do:")
         print()
+        print()
         for i in range(len(options)):
-            print(str(i) + ": " + options[i])
+            value = options[i]
+            print(str(i) + ": " + options[i].msg)
         print()
 
         option = None
@@ -22,7 +39,8 @@ def cli():
         except EOFError:
             option = 0
 
-        shouldExit = _handle_switch_case(option)
+        if options[option].funcPointer() == "Exit":
+            shouldExit = True
 
 
 ###############################################################################
@@ -44,18 +62,6 @@ def _get_int(min_value, max_value, cli_symbol="> "):
             print("Please enter an integer.")
 
     return option
-
-###########################################################
-
-def _handle_switch_case(option):
-    if option == 0:
-        print()
-        return True
-
-    else:
-        raise RuntimeError("A case that should not be reached has been reached.")
-
-    return False
 
 
 ###############################################################################
