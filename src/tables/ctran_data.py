@@ -1,4 +1,3 @@
-# TODO: make sure things return bools as appropriate
 import pandas
 from src.tables.table import Table
 
@@ -9,11 +8,11 @@ class CTran_Data(Table):
 
     def __init__(self, user=None, passwd=None, hostname="localhost", db_name="aperature", verbose=False):
         super().__init__(user, passwd, hostname, db_name, verbose)
-        self._schema = "portal"
+        self._schema = "aperature"
         self._index_col = "data_row"
         self._table_name = "ctran_data"
         self._creation_sql = "".join(["""
-            CREATE TABLE IF NOT EXISTS """, self._schema, ".", self._db_name, """
+            CREATE TABLE IF NOT EXISTS """, self._schema, ".", self._table_name, """
             (
                 data_row BIGSERIAL PRIMARY KEY,
                 service_date DATE,
@@ -66,7 +65,7 @@ class CTran_Data(Table):
             self._print("Writing sample data to table. This will take a few minutes.")
 
         sample_data.to_sql(
-                self._db_name,
+                self._table_name,
                 self._engine,
                 if_exists = "append",
                 index = False,

@@ -4,6 +4,7 @@
 # exception: psycopg2.errors.AdminShutdown
 # exception: sqlalchemy.exc.OperationalError
 """
+# TODO: make sure things return bools as appropriate
 import abc
 import getpass
 import pandas
@@ -21,31 +22,30 @@ class Table(abc.ABC):
     # Public Methods
 
     def __init__(self, user=None, passwd=None, hostname="localhost", db_name="aperature", verbose=False):
-        self.user = None
-        self.passwd = None
-        self.hostname = hostname
         self.verbose = verbose
-
+        self._user = None
+        self._passwd = None
+        self._hostname = hostname
         self._chunksize = 1000
         self._db_name = db_name
         self._engine = None
 
         if user is None:
-            self.user = self._prompt("Enter username: ")
+            self._user = self._prompt("Enter username: ")
         else:
-            self.user = user
+            self._user = user
 
         if passwd is None:
-            self.passwd = self._prompt("Enter password: ", hide_input=True)
+            self._passwd = self._prompt("Enter password: ", hide_input=True)
         else:
-            self.passwd = passwd
+            self._passwd = passwd
 
         self.build_engine()
 
     #######################################################
 
     def build_engine(self):
-        engine_info = ["postgresql://", self.user, ":", self.passwd, "@", self.hostname, "/", self._db_name]
+        engine_info = ["postgresql://", self._user, ":", self._passwd, "@", self._hostname, "/", self._db_name]
         self._engine = create_engine("".join(engine_info))
         
         self._print("Your engine has been created: ", self._engine)
@@ -58,16 +58,23 @@ class Table(abc.ABC):
 
     #######################################################
     
-    # TODO: can read_sql throw exceptions? or fail?
+    # TODO: can read_sql throw exceptions (sqlalchemy.exc.ProgrammingError)? or fail to connect?
+    # NOTE: if there is no ctran_data table, this will not work, obviously.
     def get_full_table(self):
-        return pandas.read_sql("".join(["SELECT * FROM ", self._schema, ".", self._db_name, ";"]), self._engine, index_col=self._index_col)
+        # Make sure the schema is created to avoid a SQL exception about
+        # querying a table from a non-existent schema.
+        if not self.create_schema():
+            self._print("ERROR: failed to create schema, cancelling operation.")
+            return False
+
+        return pandas.read_sql("".join(["SELECT * FROM ", self._schema, ".", self._table_name, ";"]), self._engine, index_col=self._index_col)
 
     #######################################################
 
     def create_schema(self):
         self._print("Connecting to DB.")
         with self._engine.connect() as conn:
-            self._print("Creating schema ", self._schema)
+            self._print("Creating schema ", self._schema + ".")
             conn.execute("".join(["CREATE SCHEMA IF NOT EXISTS ", self._schema, ";"]))
 
         self._print("Done.")
@@ -87,9 +94,13 @@ class Table(abc.ABC):
     #######################################################
     
     def create_table(self):
+        if not self.create_schema():
+            self._print("ERROR: failed to create schema, cancelling operation.")
+            return False
+
         self._print("Connecting to DB.")
         with self._engine.connect() as conn:
-            self._print("Creating table ", self._db_name + ".")
+            self._print("Creating table ", self._table_name + ".")
             conn.execute(self._creation_sql)
 
         self._print("Done.")
@@ -100,8 +111,14 @@ class Table(abc.ABC):
     # TODO: catch that invalid SQL exception or invalid table name, and return false
     # or if the table already exists - sqlalchemy.exc.ProgrammingError
     def delete_table(self):
+        # Make sure the schema is created to avoid a SQL exception about
+        # deleting a table from a non-existent schema.
+        if not self.create_schema():
+            self._print("ERROR: failed to create schema, cancelling operation.")
+            return False
+
         self._print("Connecting to DB.")
-        # TODO: see if can do DROP TABLE schema.name; - tst with local server manually
+
         with self._engine.connect() as conn:
             sql = "".join(["DROP TABLE IF EXISTS " + self._schema + "." + self._db_name + ";"])
             self._print(sql)
