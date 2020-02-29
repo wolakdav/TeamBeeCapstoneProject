@@ -14,10 +14,6 @@ class _Option():
 # Public Functions
 
 def cli():
-    def ctran_info():
-        query = ctran.get_full_table()
-        query.info()
-
     shouldExit = False
     options = [
         _Option("(or ctrl-d) Exit.", lambda: "Exit"),
