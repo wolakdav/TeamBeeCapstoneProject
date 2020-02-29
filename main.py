@@ -7,11 +7,11 @@ from src.tables.duplicated_data import Duplicated_Data
 # Private Classes
 
 class _Option():
-    # funcPointer should return str "Exit" iff that option should cause main to
+    # func_pointer should return str "Exit" iff that option should cause main to
     # exit.
-    def __init__(self, msg, funcPointer):
+    def __init__(self, msg, func_pointer):
         self.msg = msg
-        self.funcPointer = funcPointer
+        self.func_pointer = func_pointer
 
 
 ###############################################################################
@@ -31,7 +31,7 @@ def cli():
         query = ctran.get_full_table()
         query.info()
 
-    shouldExit = False
+    should_exit = False
     options = [
         _Option("(or ctrl-d) Exit.", lambda: "Exit"),
         _Option("Print engine.", ctran.print_engine),
@@ -44,7 +44,7 @@ def cli():
         _Option("Query ctran_data and print ctran_data.info().", ctran_info)
     ]
 
-    while not shouldExit:
+    while not should_exit:
         print()
         print("This is the StopSpot data pipeline. Please select what you would like to do:")
         print()
@@ -60,16 +60,16 @@ def cli():
         except EOFError:
             option = 0
 
-        if options[option].funcPointer() == "Exit":
-            shouldExit = True
+        if options[option].func_pointer() == "Exit":
+            should_exit = True
 
 
 ###############################################################################
 # Private Functions
 
 def _get_int(min_value, max_value, cli_symbol="> "):
-    shouldContinue = True
-    while shouldContinue:
+    should_continue = True
+    while should_continue:
         try:
             option = input(cli_symbol)
             option = int(option)
@@ -77,7 +77,7 @@ def _get_int(min_value, max_value, cli_symbol="> "):
             if option < min_value or option > max_value:
                 print("{" + str(option) + "} is not within range [" + str(min_value) + ", " + str(max_value) + "]; try again.")
             else:
-                shouldContinue = False
+                should_continue = False
 
         except ValueError:
             print("Please enter an integer.")
