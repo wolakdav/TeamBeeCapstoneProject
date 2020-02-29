@@ -1,6 +1,6 @@
 # TODO: make sure things return bools as appropriate
 import pandas
-from table import Table
+from .table import Table
 
 class CTran_Data(Table):
 

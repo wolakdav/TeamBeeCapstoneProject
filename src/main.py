@@ -1,6 +1,7 @@
 # TODO: put table.py and ctran_data.py in src/databases/
-# TODO: give sw23 root permissions on postgres
-from ctran_data import CTran_Data
+# TODO: put table.py and ctran_data.py into src w/ init file
+# TODO: build unit tests; see Nelson's test suite branch when pushed.
+from tables.ctran_data import CTran_Data
 
 ###############################################################################
 # Functions

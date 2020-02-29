@@ -103,7 +103,7 @@ class Table(abc.ABC):
         self._print("Connecting to DB.")
         # TODO: see if can do DROP TABLE schema.name; - tst with local server manually
         with self._engine.connect() as conn:
-            sql = "".join(["DROP TABLE " + self._schema + "." + self._db_name + ";"])
+            sql = "".join(["DROP TABLE IF EXISTS" + self._schema + "." + self._db_name + ";"])
             self._print(sql)
             conn.execute(sql)
 
