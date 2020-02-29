@@ -61,21 +61,18 @@ class Table(abc.ABC):
     # TODO: can read_sql throw exceptions (sqlalchemy.exc.ProgrammingError)? or fail to connect?
     # NOTE: if there is no ctran_data table, this will not work, obviously.
     def get_full_table(self):
-        # Make sure the schema is created to avoid a SQL exception about
-        # querying a table from a non-existent schema.
-        if not self.create_schema():
-            self._print("ERROR: failed to create schema, cancelling operation.")
-            return False
-
-        return pandas.read_sql("".join(["SELECT * FROM ", self._schema, ".", self._table_name, ";"]), self._engine, index_col=self._index_col)
+        sql = "".join(["SELECT * FROM ", self._schema, ".", self._table_name, ";"])
+        self._print(sql)
+        return pandas.read_sql(sql, self._engine, index_col=self._index_col)
 
     #######################################################
 
     def create_schema(self):
         self._print("Connecting to DB.")
         with self._engine.connect() as conn:
-            self._print("Creating schema ", self._schema + ".")
-            conn.execute("".join(["CREATE SCHEMA IF NOT EXISTS ", self._schema, ";"]))
+            sql = "".join(["CREATE SCHEMA IF NOT EXISTS ", self._schema, ";"])
+            self._print(sql)
+            conn.execute(sql)
 
         self._print("Done.")
         return True
@@ -85,8 +82,9 @@ class Table(abc.ABC):
     def delete_schema(self):
         self._print("Connecting to DB.")
         with self._engine.connect() as conn:
-            self._print("Deleting schema ", self._schema)
-            conn.execute("".join(["DROP SCHEMA IF EXISTS ", self._schema, " CASCADE;"]))
+            sql = "".join(["DROP SCHEMA IF EXISTS ", self._schema, " CASCADE;"])
+            self._print(sql)
+            conn.execute(sql)
 
         self._print("Done.")
         return True
@@ -100,7 +98,7 @@ class Table(abc.ABC):
 
         self._print("Connecting to DB.")
         with self._engine.connect() as conn:
-            self._print("Creating table ", self._table_name + ".")
+            self._print(self._creation_sql)
             conn.execute(self._creation_sql)
 
         self._print("Done.")
@@ -111,16 +109,9 @@ class Table(abc.ABC):
     # TODO: catch that invalid SQL exception or invalid table name, and return false
     # or if the table already exists - sqlalchemy.exc.ProgrammingError
     def delete_table(self):
-        # Make sure the schema is created to avoid a SQL exception about
-        # deleting a table from a non-existent schema.
-        if not self.create_schema():
-            self._print("ERROR: failed to create schema, cancelling operation.")
-            return False
-
         self._print("Connecting to DB.")
-
         with self._engine.connect() as conn:
-            sql = "".join(["DROP TABLE IF EXISTS " + self._schema + "." + self._db_name + ";"])
+            sql = "".join(["DROP TABLE IF EXISTS " + self._schema + "." + self._table_name + ";"])
             self._print(sql)
             conn.execute(sql)
 
