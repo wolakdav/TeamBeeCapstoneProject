@@ -10,7 +10,8 @@ from sqlalchemy.exc import SQLAlchemyError
 class Table(abc.ABC):
     """ Subclasses should declare/initialize:
     str self._table_name
-    str self._index_col
+    str self._index_col (For the purposes of loading via Pandas' index_col
+                         parameter)
     str self._creation_sql
     str self._schema
     """
