@@ -47,6 +47,8 @@ class Table(abc.ABC):
                 self._passwd = passwd
 
             self._build_engine()
+            self._print("Unsetting Table._passwd for security purposes.")
+            self._passwd = None
 
     #######################################################
 
@@ -149,8 +151,6 @@ class Table(abc.ABC):
         self._engine = create_engine("".join(engine_info))
         
         self._print("Your engine has been created: ", self._engine)
-        self._print("Unsetting Table._passwd for security purposes.")
-        self._passwd = None
         return True
 
     #######################################################
