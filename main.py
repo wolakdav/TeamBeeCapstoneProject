@@ -25,7 +25,6 @@ def cli():
         print()
         print()
         for i in range(len(options)):
-            value = options[i]
             print(str(i) + ": " + options[i].msg)
         print()
 
