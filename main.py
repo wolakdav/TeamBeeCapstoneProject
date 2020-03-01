@@ -18,14 +18,9 @@ class _Option():
 # Public Functions
 
 def cli():
-    # TODO: Current, both of these prompt for user/passwd; only have one do it.
-    #   Possibly have the constructor take an engine and just leave user/passwd
-    #   blank. If engine is supplied to constructor, extract
-    #   user/passwd/hostname/db_name
-    ctran = CTran_Data()
-    duplicates = Duplicated_Data()
-    ctran.verbose = True
-    duplicates.verbose = True
+    ctran = CTran_Data(verbose=True)
+    engine_url = ctran.get_engine().url
+    duplicates = Duplicated_Data(verbose=True, engine=engine_url)
 
     def ctran_info():
         query = ctran.get_full_table()
@@ -37,7 +32,7 @@ def cli():
     should_exit = False
     options = [
         _Option("(or ctrl-d) Exit.", lambda: "Exit"),
-        _Option("Print engine.", ctran.print_engine),
+        _Option("Print engine.", lambda: print(ctran.get_engine())),
         _Option("Create aperature schema.", ctran.create_schema),
         _Option("Delete aperature schema.", ctran.delete_schema),
         _Option("Create ctran_data table.", ctran.create_table),
