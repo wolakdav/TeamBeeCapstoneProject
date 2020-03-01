@@ -1,14 +1,11 @@
-""" Perform assumption checking
-# TODO: send this a faulty engine, and one without permissions
-# TODO: see what exceptions can be thrown by conn
-# exception: psycopg2.errors.AdminShutdown
-# exception: sqlalchemy.exc.OperationalError
-"""
-# TODO: make sure things return bools as appropriate
+# TODO: Perform one last final assumption checking.
 import abc
+import sys
 import getpass
 import pandas
 from sqlalchemy import create_engine
+from sqlalchemy.exc import SQLAlchemyError
+
 
 class Table(abc.ABC):
     """ Subclasses should declare/initialize:
@@ -54,25 +51,38 @@ class Table(abc.ABC):
     #######################################################
 
     def print_engine(self):
-        self._print("", self._engine, force=True)
+        print(self._engine)
 
     #######################################################
     
-    # TODO: can read_sql throw exceptions (sqlalchemy.exc.ProgrammingError)? or fail to connect?
     # NOTE: if there is no ctran_data table, this will not work, obviously.
     def get_full_table(self):
         sql = "".join(["SELECT * FROM ", self._schema, ".", self._table_name, ";"])
         self._print(sql)
-        return pandas.read_sql(sql, self._engine, index_col=self._index_col)
+        try:
+            df = pandas.read_sql(sql, self._engine, index_col=self._index_col)
+            return df
+
+        except SQLAlchemyError as error:
+            print("SQLAclchemy:", error)
+            return None
+        except ValueError as error:
+            print("Pandas:", error)
+            return None
 
     #######################################################
 
     def create_schema(self):
         self._print("Connecting to DB.")
-        with self._engine.connect() as conn:
-            sql = "".join(["CREATE SCHEMA IF NOT EXISTS ", self._schema, ";"])
-            self._print(sql)
-            conn.execute(sql)
+        sql = "".join(["CREATE SCHEMA IF NOT EXISTS ", self._schema, ";"])
+        try:
+            with self._engine.connect() as conn:
+                self._print(sql)
+                conn.execute(sql)
+
+        except SQLAlchemyError as error:
+            print("SQLAclchemy:", error)
+            return False
 
         self._print("Done.")
         return True
@@ -81,10 +91,15 @@ class Table(abc.ABC):
 
     def delete_schema(self):
         self._print("Connecting to DB.")
-        with self._engine.connect() as conn:
-            sql = "".join(["DROP SCHEMA IF EXISTS ", self._schema, " CASCADE;"])
-            self._print(sql)
-            conn.execute(sql)
+        sql = "".join(["DROP SCHEMA IF EXISTS ", self._schema, " CASCADE;"])
+        try:
+            with self._engine.connect() as conn:
+                self._print(sql)
+                conn.execute(sql)
+
+        except SQLAlchemyError as error:
+            print("SQLAclchemy:", error)
+            return False
 
         self._print("Done.")
         return True
@@ -97,23 +112,31 @@ class Table(abc.ABC):
             return False
 
         self._print("Connecting to DB.")
-        with self._engine.connect() as conn:
-            self._print(self._creation_sql)
-            conn.execute(self._creation_sql)
+        try:
+            with self._engine.connect() as conn:
+                self._print(self._creation_sql)
+                conn.execute(self._creation_sql)
+
+        except SQLAlchemyError as error:
+            print("SQLAclchemy:", error)
+            return False
 
         self._print("Done.")
         return True
 
     #######################################################
 
-    # TODO: catch that invalid SQL exception or invalid table name, and return false
-    # or if the table already exists - sqlalchemy.exc.ProgrammingError
     def delete_table(self):
         self._print("Connecting to DB.")
-        with self._engine.connect() as conn:
-            sql = "".join(["DROP TABLE IF EXISTS " + self._schema + "." + self._table_name + ";"])
-            self._print(sql)
-            conn.execute(sql)
+        sql = "".join(["DROP TABLE IF EXISTS " + self._schema + "." + self._table_name + ";"])
+        try:
+            with self._engine.connect() as conn:
+                self._print(sql)
+                conn.execute(sql)
+
+        except SQLAlchemyError as error:
+            print("SQLAclchemy:", error)
+            return False
 
         self._print("Done.")
         return True

@@ -16,4 +16,4 @@ class Duplicated_Data(Table):
                 PRIMARY KEY (duplicate_ID, data_row)
             );"""])
 
-# TODO: fill with fake data to verify that the table initialized correctly.
+# TODO: fill with fake data and query to verify that the table initialized correctly.

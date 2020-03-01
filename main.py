@@ -29,7 +29,10 @@ def cli():
 
     def ctran_info():
         query = ctran.get_full_table()
-        query.info()
+        if query is None:
+            print("WARNING: no data returned.")
+        else:
+            query.info()
 
     should_exit = False
     options = [

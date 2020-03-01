@@ -1,5 +1,7 @@
+import sys
 import pandas
 from src.tables.table import Table
+from sqlalchemy.exc import SQLAlchemyError
 
 class CTran_Data(Table):
 
@@ -50,28 +52,41 @@ class CTran_Data(Table):
     def create_table(self, ctran_sample_path="assets/"):
         csv_location = "".join([ctran_sample_path, "/ctran_trips_sample.csv"])
         self._print("Loading " + csv_location)
+        sample_data = None
+        try:
+            sample_data = pandas.read_csv(csv_location, parse_dates=["service_date"])
 
-        # TODO: catch the error based on not finding the path
-        #   or use the os library to verify that the path/file exists first
-        sample_data = pandas.read_csv(csv_location, parse_dates=["service_date"])
+        except FileNotFoundError as error:
+            print("Pandas:", error)
+            print("Cannot continue table creation, cancelling.")
+            return False
+
 
         self._print("Connecting to DB.")
-        with self._engine.connect() as conn:
-            self._print("Initializing table.")
-            if not super().create_table():
-                self._print("ERROR: failed to create the table; cannot proceed.")
-                return False
+        try:
+            with self._engine.connect() as conn:
+                self._print("Initializing table.")
+                if not super().create_table():
+                    self._print("ERROR: failed to create the table; cannot proceed.")
+                    return False
 
-            self._print("Writing sample data to table. This will take a few minutes.")
+                self._print("Writing sample data to table. This will take a few minutes.")
 
-        sample_data.to_sql(
-                self._table_name,
-                self._engine,
-                if_exists = "append",
-                index = False,
-                chunksize = self._chunksize,
-                schema = self._schema,
-            )
+            sample_data.to_sql(
+                    self._table_name,
+                    self._engine,
+                    if_exists = "append",
+                    index = False,
+                    chunksize = self._chunksize,
+                    schema = self._schema,
+                )
+
+        except SQLAlchemyError as error:
+            print("SQLAclchemy:", error)
+            return False
+        except ValueError as error:
+            print("Pandas:", error)
+            return False
 
         self._print("Done.")
         return True
