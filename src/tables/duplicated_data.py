@@ -1,4 +1,3 @@
-import pandas
 from src.tables.table import Table
 
 class Duplicated_Data(Table):

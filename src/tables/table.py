@@ -1,4 +1,5 @@
 # TODO: Perform one last final assumption checking.
+#   do this during testing
 import abc
 import sys
 import getpass
