@@ -8,8 +8,8 @@ class CTran_Data(Table):
     ###########################################################################
     # Public Methods
 
-    def __init__(self, user=None, passwd=None, hostname="localhost", db_name="aperature", verbose=False):
-        super().__init__(user, passwd, hostname, db_name, verbose)
+    def __init__(self, user=None, passwd=None, hostname="localhost", db_name="aperature", verbose=False, engine=None):
+        super().__init__(user, passwd, hostname, db_name, verbose, engine)
         self._schema = "aperature"
         self._index_col = "data_row"
         self._table_name = "ctran_data"
@@ -52,6 +52,7 @@ class CTran_Data(Table):
     def create_table(self, ctran_sample_path="assets/"):
         csv_location = "".join([ctran_sample_path, "/ctran_trips_sample.csv"])
         self._print("Loading " + csv_location)
+
         sample_data = None
         try:
             sample_data = pandas.read_csv(csv_location, parse_dates=["service_date"])
@@ -61,7 +62,16 @@ class CTran_Data(Table):
             print("Cannot continue table creation, cancelling.")
             return False
 
+        if not self._create_table_helper(sample_data):
+            return None
 
+        self._print("Done.")
+        return True
+
+    ###########################################################################
+    # Private Methods
+
+    def _create_table_helper(self, sample_data):
         self._print("Connecting to DB.")
         try:
             with self._engine.connect() as conn:
@@ -88,5 +98,4 @@ class CTran_Data(Table):
             print("Pandas:", error)
             return False
 
-        self._print("Done.")
         return True
