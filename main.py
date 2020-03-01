@@ -1,7 +1,9 @@
 # TODO: build unit tests; see Nelson's test suite branch when pushed.
+#   When getting started, give everything one last assumption check.
 from src.tables.ctran_data import CTran_Data
 from src.tables.duplicated_data import Duplicated_Data
 from src.tables.flagged_data import Flagged_Data
+from src.tables.flags import Flags
 
 
 ##############################################################################
@@ -23,6 +25,7 @@ def cli():
     engine_url = ctran.get_engine().url
     duplicates = Duplicated_Data(verbose=True, engine=engine_url)
     flagged = Flagged_Data(verbose=True, engine=engine_url)
+    flags = Flags(verbose=True, engine=engine_url)
 
     def ctran_info():
         query = ctran.get_full_table()
@@ -40,9 +43,11 @@ def cli():
         _Option("Create ctran_data table.", ctran.create_table),
         _Option("Create duplicates table.", duplicates.create_table),
         _Option("Create flagged_data table.", flagged.create_table),
+        _Option("Create flags table.", flags.create_table),
         _Option("Delete ctran_data table.", ctran.delete_table),
         _Option("Delete duplicates table.", duplicates.delete_table),
         _Option("Delete flagged_data table.", flagged.delete_table),
+        _Option("Delete flags table.", flags.delete_table),
         _Option("Query ctran_data and print ctran_data.info().", ctran_info)
     ]
 
