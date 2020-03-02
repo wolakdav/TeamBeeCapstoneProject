@@ -1,0 +1,14 @@
+
+verify the Table methods work
+    create stubs to verify that these work correctly
+    cause one or two sqlalchemy errors for each, like a faulty engine or a the server getting shut down mid work
+    catch a pandas error, make sure the method returns none
+
+    use CTran_Data to test Table, but be sure to also get Duplicated_Data.create_table to verify that Table.create_table works normally
+        have each other subclass create the table to verify that all of the supplied info is working right, since create_table uses all of the supplied data and the ctran_data tests use the exact same methods as the others
+
+    make sure the engine is built properly?
+
+
+integration tests
+    can actually connect to the db
