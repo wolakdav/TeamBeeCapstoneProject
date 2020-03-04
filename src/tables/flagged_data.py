@@ -8,13 +8,13 @@ class Flagged_Data(Table):
         self._table_name = "flagged_data"
         self._index_col = None
         self._expected_cols = [
-            "flag_ID",
+            "flag_id",
             "data_row"
         ]
         self._creation_sql = "".join(["""
             CREATE TABLE IF NOT EXISTS """, self._schema, ".", self._table_name, """
             (
-                flag_ID INTEGER,
+                flag_id INTEGER,
                 data_row INTEGER,
-                PRIMARY KEY (flag_ID, data_row)
+                PRIMARY KEY (flag_id, data_row)
             );"""])

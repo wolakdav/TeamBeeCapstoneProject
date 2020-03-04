@@ -8,13 +8,13 @@ class Duplicated_Data(Table):
         self._table_name = "duplicates"
         self._index_col = None
         self._expected_cols = [
-            "duplicate_ID",
+            "duplicate_id",
             "data_row"
         ]
         self._creation_sql = "".join(["""
             CREATE TABLE IF NOT EXISTS """, self._schema, ".", self._table_name, """
             (
-                duplicate_ID INTEGER,
+                duplicate_id INTEGER,
                 data_row INTEGER,
-                PRIMARY KEY (duplicate_ID, data_row)
+                PRIMARY KEY (duplicate_id, data_row)
             );"""])

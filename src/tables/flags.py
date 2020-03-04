@@ -6,14 +6,14 @@ class Flags(Table):
         super().__init__(user, passwd, hostname, db_name, verbose, engine)
         self._schema = "aperature"
         self._table_name = "flags"
-        self._index_col = "flag_ID"
+        self._index_col = "flag_id"
         self._expected_cols = [
-            "flag_ID",
+            "flag_id",
             "description"
         ]
         self._creation_sql = "".join(["""
             CREATE TABLE IF NOT EXISTS """, self._schema, ".", self._table_name, """
             (
-                flag_ID INTEGER PRIMARY KEY,
+                flag_id INTEGER PRIMARY KEY,
                 description VARCHAR(200)
             );"""])
