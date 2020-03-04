@@ -1,4 +1,10 @@
 
+just use local postgres instance for testing?
+    also just do rudimentary sql string checking
+        esp if no db connection to localhost
+
+    see notes in phone
+
 verify the Table methods work
     create stubs to verify that these work correctly
     cause one or two sqlalchemy errors for each, like a faulty engine or a the server getting shut down mid work
