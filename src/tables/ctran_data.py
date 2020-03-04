@@ -63,7 +63,7 @@ class CTran_Data(Table):
             return False
 
         if not self._create_table_helper(sample_data):
-            return None
+            return False
 
         self._print("Done.")
         return True
