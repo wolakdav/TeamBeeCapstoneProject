@@ -6,14 +6,16 @@ from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
 
 
+""" Subclasses should declare/initialize:
+str self._schema
+str self._table_name
+str self._index_col
+    For the purposes of loading via Pandas' index_col parameter.
+str list self._expected_cols
+    This will contain a list of strings of the columns in the table.
+str self._creation_sql
+"""
 class Table(abc.ABC):
-    """ Subclasses should declare/initialize:
-    str self._table_name
-    str self._index_col (For the purposes of loading via Pandas' index_col
-                         parameter)
-    str self._creation_sql
-    str self._schema
-    """
 
     ###########################################################################
     # Public Methods

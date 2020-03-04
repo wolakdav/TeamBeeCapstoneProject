@@ -11,8 +11,38 @@ class CTran_Data(Table):
     def __init__(self, user=None, passwd=None, hostname="localhost", db_name="aperature", verbose=False, engine=None):
         super().__init__(user, passwd, hostname, db_name, verbose, engine)
         self._schema = "aperature"
-        self._index_col = "data_row"
         self._table_name = "ctran_data"
+        self._index_col = "data_row"
+        self._expected_cols = [
+            "service_date",
+            "vehicle_number",
+            "leave_time",
+            "train",
+            "badge",
+            "route_number",
+            "direction",
+            "service_key",
+            "trip_number",
+            "stop_time",
+            "arrive_time",
+            "dwell",
+            "location_id",
+            "door",
+            "lift",
+            "ons",
+            "offs",
+            "estimated_load",
+            "maximum_speed",
+            "train_mileage",
+            "pattern_distance",
+            "location_distance",
+            "x_coordinate",
+            "y_coordinate",
+            "data_source",
+            "schedule_status",
+            "trip_id"
+        ]
+
         self._creation_sql = "".join(["""
             CREATE TABLE IF NOT EXISTS """, self._schema, ".", self._table_name, """
             (
@@ -60,6 +90,11 @@ class CTran_Data(Table):
         except FileNotFoundError as error:
             print("Pandas:", error)
             print("Cannot continue table creation, cancelling.")
+            return False
+
+        # list(pandas.DataFrame) will get a list of the column names.
+        if list(sample_data) != self._expected_cols:
+            self._print("ERROR: the columns of read data does not match the specified columns.")
             return False
 
         if not self._create_table_helper(sample_data):
