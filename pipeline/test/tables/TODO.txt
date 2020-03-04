@@ -1,0 +1,8 @@
+
+check sql string and return value for each method
+    make sure sql string and return value are correct on happy passes, and exception and return value are correct on sad passes
+
+TODO: figure out how to test pandas and self._index_col
+    probably just check to make sure that it's what it should be
+
+also, recall that there is a need to handle when the schema changes; check this on load, or on write? on write, how does pandas act if there's an invalid column?
