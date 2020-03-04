@@ -1,6 +1,6 @@
 import sys
 import pandas
-from pipeline.src.tables.table import Table
+from src.tables.table import Table
 from sqlalchemy.exc import SQLAlchemyError
 
 class CTran_Data(Table):
@@ -49,7 +49,7 @@ class CTran_Data(Table):
     #######################################################
 
     # NOTE: this method will likely fail if ran on a Windows machine.
-    def create_table(self, ctran_sample_path="pipeline/assets/"):
+    def create_table(self, ctran_sample_path="assets/"):
         csv_location = "".join([ctran_sample_path, "/ctran_trips_sample.csv"])
         self._print("Loading " + csv_location)
 

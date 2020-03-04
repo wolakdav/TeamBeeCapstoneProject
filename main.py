@@ -1,7 +1,7 @@
-from pipeline.src.tables.ctran_data import CTran_Data
-from pipeline.src.tables.duplicated_data import Duplicated_Data
-from pipeline.src.tables.flagged_data import Flagged_Data
-from pipeline.src.tables.flags import Flags
+from src.tables.ctran_data import CTran_Data
+from src.tables.duplicated_data import Duplicated_Data
+from src.tables.flagged_data import Flagged_Data
+from src.tables.flags import Flags
 
 
 ##############################################################################
