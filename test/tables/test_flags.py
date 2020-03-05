@@ -32,6 +32,7 @@ def test_verbose_bool(instance):
 
 def test_chunksize_int(instance):
     assert isinstance(instance._chunksize, int), "Flags._chunksize must be an int."
+    assert instance._chunksize > 0, "Flags._chunksize must be greater than zero."
 
 def test_built_engine(instance):
     assert isinstance(instance._engine, Engine), "Flags._engine is not a SQLAlchemy Engine."
