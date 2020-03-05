@@ -14,6 +14,8 @@ str self._index_col
 str list self._expected_cols
     This will contain a list of strings of the columns in the table.
 str self._creation_sql
+
+Additionally, subclasses should not alter self._engine in any capacity.
 """
 class Table(abc.ABC):
 
@@ -23,7 +25,7 @@ class Table(abc.ABC):
     # For security purposes, self._passwd is unset after the engine is created.
     def __init__(self, user=None, passwd=None, hostname="localhost", db_name="aperature", verbose=False, engine=None):
         # Currently, _hostname, _db_name, _user, and _passwd are just used to
-        # create the engine. Additionally, if an engine URL is supplied, none
+        # create the engine. Consequently, if an engine URL is supplied, none
         # of the other data will be filled since their result has been served.
         self.verbose = verbose
         self._chunksize = 1000
@@ -61,6 +63,10 @@ class Table(abc.ABC):
     
     # NOTE: if there is no ctran_data table, this will not work, obviously.
     def get_full_table(self):
+        if self._engine is None:
+            self._print("ERROR: self._engine is None, cannot continue.")
+            return None
+
         sql = "".join(["SELECT * FROM ", self._schema, ".", self._table_name, ";"])
         self._print(sql)
         try:
@@ -77,6 +83,10 @@ class Table(abc.ABC):
     #######################################################
 
     def create_schema(self):
+        if self._engine is None:
+            self._print("ERROR: self._engine is None, cannot continue.")
+            return False
+
         self._print("Connecting to DB.")
         sql = "".join(["CREATE SCHEMA IF NOT EXISTS ", self._schema, ";"])
         try:
@@ -94,6 +104,10 @@ class Table(abc.ABC):
     #######################################################
 
     def delete_schema(self):
+        if self._engine is None:
+            self._print("ERROR: self._engine is None, cannot continue.")
+            return False
+
         self._print("Connecting to DB.")
         sql = "".join(["DROP SCHEMA IF EXISTS ", self._schema, " CASCADE;"])
         try:
@@ -111,6 +125,10 @@ class Table(abc.ABC):
     #######################################################
     
     def create_table(self):
+        if self._engine is None:
+            self._print("ERROR: self._engine is None, cannot continue.")
+            return False
+
         if not self.create_schema():
             self._print("ERROR: failed to create schema, cancelling operation.")
             return False
@@ -131,6 +149,10 @@ class Table(abc.ABC):
     #######################################################
 
     def delete_table(self):
+        if self._engine is None:
+            self._print("ERROR: self._engine is None, cannot continue.")
+            return False
+
         self._print("Connecting to DB.")
         sql = "".join(["DROP TABLE IF EXISTS " + self._schema + "." + self._table_name + ";"])
         try:

@@ -80,6 +80,10 @@ class CTran_Data(Table):
 
     # NOTE: this method will likely fail if ran on a Windows machine.
     def create_table(self, ctran_sample_path="assets/"):
+        if self._engine is None:
+            self._print("ERROR: self._engine is None, cannot continue.")
+            return False
+
         csv_location = "".join([ctran_sample_path, "/ctran_trips_sample.csv"])
         self._print("Loading " + csv_location)
 
