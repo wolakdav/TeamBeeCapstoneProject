@@ -19,6 +19,11 @@ def engine_instance():
 ###############################################################################
 # Constructor tests
 
+# Aspects of Flag relating to _schema and _table_name are not particularly
+# testable apart from type and non-null string as they are designed to be
+# highly adjustable as needed, as opposed to _index_col, which is pretty
+# static.
+
 def test_passwd_unset(instance):
     assert instance._passwd is None, "Flags._passwd is not unset."
 
@@ -33,11 +38,11 @@ def test_built_engine(instance):
 
 def test_schema(instance):
     assert isinstance(instance._schema, str), "Flags._schema must be a str."
-    assert len(instance._schema) > 1, "Flags.schema cannot be an empty string."
+    assert len(instance._schema) > 0, "Flags.schema cannot be an empty string."
 
 def test_table_name(instance):
     assert isinstance(instance._table_name, str), "Flags._table_name must be a str."
-    assert len(instance._table_name) > 1, "Flags.table_name cannot be an empty string."
+    assert len(instance._table_name) > 0, "Flags.table_name cannot be an empty string."
 
 def test_index_col(instance):
     assert isinstance(instance._index_col, str), "Flags._index_col must be a str."
@@ -47,7 +52,7 @@ def test_expected_cols(instance):
     assert isinstance(instance._expected_cols, list), "Flags._expected_cols must be a list of strs."
     for element in instance._expected_cols:
         assert isinstance(element, str), "Flags._expected_cols must be a list of strs."
-
+        assert len(element) > 0, "Flags._expected_cols must contain non-null strs."
 
 def test_engine_copy(engine_instance):
     instance = engine_instance[0]
