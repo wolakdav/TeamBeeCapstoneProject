@@ -1,0 +1,35 @@
+There are different types of flags used to represent different types of things present in a row data (object):
+
+#############################################################################################################
+
+*_NULL flags mean that a particular field is null (e.g.: SERVICE_DATE_NULL means service_date field is null):
+
+  SERVICE_DATE_NULL = 3					['service_date' field is Null]
+  VEHICLE_NUMBER_NULL = 4				['vehicle_number' field is Null]  
+  LEAVE_TIME_NULL = 5					['leave_time' field is Null]
+  TRAIN_NULL = 6						['train' field is Null]
+  BADGE_NULL = 7						['badge' field is Null]
+  ROUTE_NUMBER_NULL = 8					['route_number' field is Null]
+  DIRECTION_NULL = 9					['direction' field is Null]
+  SERVICE_KEY_NULL = 10					['service_key' field is Null]
+  TRIP_NUMBER_NULL = 11					['trip_number' field is Null]
+  STOP_TIME_NULL = 12					['stop_time' field is Null]
+  ARRIVE_TIME_NULL = 13					['arrive_time' field is Null]
+  DWELL_NULL = 14						['dwell' field is Null]
+  LOCATION_ID_NULL = 15					['location_id' field is Null]
+  DOOR_NULL = 16						['door' field is Null]
+  ONS_NULL = 17							['ons' field is Null]
+  OFFS_NULL = 18						['offs' field is Null]
+  ESTIMATED_LOAD_NULL = 19				['estimated_load' field is Null]
+  LIFT_NULL = 20						['lift' field is Null]
+  MAXIMUM_SPEED_NULL = 21				['maximum_speed' field is Null]
+  TRAIN_MILEAGE_NULL = 22				['train_mileage' field is Null]
+  PATTERN_DISTANCE_NULL = 23			['pattern_distance' field is Null]
+  LOCATION_DISTANCE_NULL = 24			['location_distance' field is Null]
+  X_COORDINATE_NULL = 25				['x_coordinate' field is Null]
+  Y_COORDINATE_NULL = 26				['y_coordinate' field is Null]
+  DATA_SOURCE_NULL = 27					['data_source' field is Null]
+  SCHEDULE_STATUS_NULL = 28				['schedule_status' field is Null]
+  TRIP_ID_NULL = 29						['trip_id' field is Null]
+
+#############################################################################################################
