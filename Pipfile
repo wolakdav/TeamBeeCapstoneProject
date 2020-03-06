@@ -8,8 +8,8 @@ verify_ssl = true
 [packages]
 pandas = "*"
 sqlalchemy = "*"
-psycopg2 = "*"
 pytest = "*"
+psycopg2-binary = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "3.7"
