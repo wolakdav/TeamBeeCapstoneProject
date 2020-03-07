@@ -1,5 +1,6 @@
 import pytest
 from sqlalchemy import create_engine
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.engine.base import Engine
 from src.tables.flags import Flags
 
@@ -11,9 +12,12 @@ def instance():
     return Flags(user="fake_user", passwd="fake_passwd")
 
 @pytest.fixture
-def engine_instance():
-    test_engine = create_engine("postgresql://winnie-the-pooh:honey@localhost/bee_colonies")
-    return [Flags(engine=test_engine.url), test_engine]
+def engine():
+    return create_engine("postgresql://winnie-the-pooh:honey@localhost/bee_colonies")
+
+@pytest.fixture
+def engine_instance(engine):
+    return Flags(engine=engine.url)
 
 
 ###############################################################################
@@ -55,17 +59,33 @@ def test_expected_cols(instance):
         assert isinstance(element, str), "Flags._expected_cols must be a list of strs."
         assert len(element) > 0, "Flags._expected_cols must contain non-null strs."
 
-def test_engine_copy(engine_instance):
-    instance = engine_instance[0]
-    engine = engine_instance[1]
+def test_engine_copy(engine_instance, engine):
+    instance = engine_instance
     assert isinstance(instance._engine, Engine), "Flags._engine is not a SQLAlchemy Engine."
     assert instance._engine.url == engine.url, "Engine URL was not correctly applied."
 
 def test_compare_instances(instance, engine_instance):
     msg = " does not match between instances that are given user/passwd vs an engine URL."
-    alt = engine_instance[0]
+    alt = engine_instance
     assert instance._schema == alt._schema, "".join(["Flags._schema", msg])
     assert instance._table_name == alt._table_name, "".join(["Flags._table_name", msg])
     assert instance._index_col == alt._index_col, "".join(["Flags._index_col", msg])
     assert instance._expected_cols == alt._expected_cols, "".join(["Flags._expected_cols", msg])
     assert instance._creation_sql == alt._creation_sql, "".join(["Flags._creation_sql", msg])
+
+
+###############################################################################
+# Method Tests
+
+def test_get_engine(instance):
+    assert isinstance(instance.get_engine(), Engine), "Flags.get_flags_engine() does not return an Engine."
+
+# TODO: figure out how to mock with pytest's monkeypatch or whatever
+# get the below working to make sure it works
+def test_get_full_table_happy(instance):
+    pass
+
+def test_get_full_table_sqlalchemy_exception(instance, engine):
+    # engine is fake so it will cause an error.
+    instance._engine = engine
+    assert instance.get_full_table() is None, "Flags.get_full_table() failed to catch a SQLAlchemy exception."
