@@ -64,6 +64,9 @@ def db_cli(ctran, duplicates, flagged, flags):
 # Private Functions
 
 def _menu(options):
+    if len(options) == 0:
+        return
+    
     should_exit = False
     while not should_exit:
         print()
