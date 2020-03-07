@@ -9,3 +9,6 @@ testing
 
 when done, take one last pass at the different error messages to make sure they're good and consistent
 
+
+for CTran_Data.create_table(), see if can cause that panda read to throw a ValueError exception, or whatever it is that Pandas throws on error
+    try feeding it a faulty sevice_date or something
