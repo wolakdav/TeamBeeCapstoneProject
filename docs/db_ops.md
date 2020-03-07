@@ -2,11 +2,16 @@
 
 ## Overview
 
-Database operations are handled by Table and its various subclasses in
+Database operations are handled by `Table` and its various subclasses in
 `src/tables`. Currently, this includes creating and deleting the schemas used
 for the different tables, as well as creating and deleting the tables as well.
-Some subclasses of Table, such as CTran_Data, will fill the table with actual
-data.
+Some subclasses of Table, such as `CTran_Data`, will fill the table with actual
+data.  
+These are the subclasses of Table:  
+- `CTran_Data`  
+- `Flagged_Data`  
+- `Duplicated_Data`  
+- `Flags`  
 
 ## Methods Provided by Table
 
