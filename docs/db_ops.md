@@ -46,7 +46,7 @@ This will delete the table the instance represents.
 
 Subclasses should initialize these abstract members in order for Table to
 function correctly.  
-Additionally, subclasses should not alter self._engine in any capacity.
+Additionally, subclasses should not alter `self._engine` in any capacity.
 
 ##### `self._schema`
 This member will contain the schema name as a string.
