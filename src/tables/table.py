@@ -22,38 +22,32 @@ class Table(abc.ABC):
     ###########################################################################
     # Public Methods
 
-    # For security purposes, self._passwd is unset after the engine is created.
+    # passwd is not stored as member data, it is destroyed after use.
     def __init__(self, user=None, passwd=None, hostname="localhost", db_name="aperature", verbose=False, engine=None):
-        # Currently, _hostname, _db_name, _user, and _passwd are just used to
-        # create the engine. Consequently, if an engine URL is supplied, none
-        # of the other data will be filled since their result has been served.
-        # TODO: because of ^^, make the vars temp and not members.
         self.verbose = verbose
         self._chunksize = 1000
+        self._engine = None
 
         if engine is not None:
             self._engine = create_engine(engine)
 
         else:
-            self._user = None
-            self._passwd = None
-            self._hostname = hostname
-            self._db_name = db_name
-            self._engine = None
+            user = None
+            passwd = None
+            hostname = hostname
+            db_name = db_name
 
             if user is None:
-                self._user = self._prompt("Enter username: ")
+                user = self._prompt("Enter username: ")
             else:
-                self._user = user
+                user = user
 
             if passwd is None:
-                self._passwd = self._prompt("Enter password: ", hide_input=True)
+                passwd = self._prompt("Enter password: ", hide_input=True)
             else:
-                self._passwd = passwd
+                passwd = passwd
 
-            self._build_engine()
-            self._print("Unsetting Table._passwd for security purposes.")
-            self._passwd = None
+            self._build_engine(user, passwd, hostname, db_name)
 
     #######################################################
 
@@ -179,8 +173,8 @@ class Table(abc.ABC):
     ###########################################################################
     # Private Methods
 
-    def _build_engine(self):
-        engine_info = ["postgresql://", self._user, ":", self._passwd, "@", self._hostname, "/", self._db_name]
+    def _build_engine(self, user, passwd, hostname, db_name):
+        engine_info = ["postgresql://", user, ":", passwd, "@", hostname, "/", db_name]
         self._engine = create_engine("".join(engine_info))
         
         self._print("Your engine has been created: ", self._engine)
