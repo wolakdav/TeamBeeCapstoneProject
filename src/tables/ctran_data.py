@@ -121,6 +121,7 @@ class CTran_Data(Table):
                     return False
 
                 self._print("Writing sample data to table. This will take a few minutes.")
+                self._print("Done.")
 
             sample_data.to_sql(
                     self._table_name,

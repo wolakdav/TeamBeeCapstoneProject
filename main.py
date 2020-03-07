@@ -25,6 +25,33 @@ def cli():
     flagged = Flagged_Data(verbose=True, engine=engine_url)
     flags = Flags(verbose=True, engine=engine_url)
 
+    should_exit = False
+    options = [
+        _Option("(or ctrl-d) Exit.", lambda: "Exit"),
+        _Option("Sub-menu: DB Operations", lambda: db_cli(ctran, duplicates, flagged, flags))
+    ]
+
+    while not should_exit:
+        print()
+        print("This is the StopSpot data pipeline. Please select what you would like to do:")
+        print()
+        print()
+        for i in range(len(options)):
+            print(str(i) + ": " + options[i].msg)
+        print()
+
+        option = None
+        try:
+            option = _get_int(0, len(options)-1)
+        except EOFError:
+            option = 0
+
+        if options[option].func_pointer() == "Exit":
+            should_exit = True
+
+###########################################################
+
+def db_cli(ctran, duplicates, flagged, flags):
     def ctran_info():
         query = ctran.get_full_table()
         if query is None:
@@ -51,7 +78,7 @@ def cli():
 
     while not should_exit:
         print()
-        print("This is the StopSpot data pipeline. Please select what you would like to do:")
+        print("This is the Database Operations sub-menu. Please select what you would like to do:")
         print()
         print()
         for i in range(len(options)):
@@ -66,7 +93,6 @@ def cli():
 
         if options[option].func_pointer() == "Exit":
             should_exit = True
-
 
 ###############################################################################
 # Private Functions
