@@ -7,10 +7,10 @@ class Duplicated_Data(Table):
         self._schema = "aperature"
         self._table_name = "duplicates"
         self._index_col = None
-        self._expected_cols = [
+        self._expected_cols = set([
             "duplicate_id",
             "data_row"
-        ]
+        ])
         self._creation_sql = "".join(["""
             CREATE TABLE IF NOT EXISTS """, self._schema, ".", self._table_name, """
             (

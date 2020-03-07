@@ -11,8 +11,8 @@ str self._schema
 str self._table_name
 str self._index_col
     For the purposes of loading via Pandas' index_col parameter.
-str list self._expected_cols
-    This will contain a list of strings of the columns in the table.
+str set self._expected_cols
+    This will contain a set of strings of the columns in the table.
 str self._creation_sql
 
 Additionally, subclasses should not alter self._engine in any capacity.
@@ -27,6 +27,7 @@ class Table(abc.ABC):
         # Currently, _hostname, _db_name, _user, and _passwd are just used to
         # create the engine. Consequently, if an engine URL is supplied, none
         # of the other data will be filled since their result has been served.
+        # TODO: because of ^^, make the vars temp and not members.
         self.verbose = verbose
         self._chunksize = 1000
 
@@ -80,9 +81,10 @@ class Table(abc.ABC):
             print("Pandas:", error)
             return None
         
-        if list(df) != self._expected_cols:
+        # You may be tempted to attempt to optimize this by doing list
+        # comparisons, but that can be weirdly unpredictable.
+        if set(list(df)) != self._expected_cols:
             self._print("ERROR: the columns of read data does not match the specified columns.")
-            print(list(df))
             return None
 
         return df

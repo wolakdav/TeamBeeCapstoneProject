@@ -13,7 +13,7 @@ class CTran_Data(Table):
         self._schema = "aperature"
         self._table_name = "ctran_data"
         self._index_col = "data_row"
-        self._expected_cols = [
+        self._expected_cols = set([
             "service_date",
             "vehicle_number",
             "leave_time",
@@ -41,7 +41,7 @@ class CTran_Data(Table):
             "data_source",
             "schedule_status",
             "trip_id"
-        ]
+        ])
 
         self._creation_sql = "".join(["""
             CREATE TABLE IF NOT EXISTS """, self._schema, ".", self._table_name, """
@@ -96,8 +96,9 @@ class CTran_Data(Table):
             print("Cannot continue table creation, cancelling.")
             return False
 
-        # list(pandas.DataFrame) will get a list of the column names.
-        if list(sample_data) != self._expected_cols:
+        # You may be tempted to attempt to optimize this by doing list
+        # comparisons, but that can be weirdly unpredictable.
+        if set(list(sample_data)) != self._expected_cols:
             self._print("ERROR: the columns of read data does not match the specified columns.")
             return False
 

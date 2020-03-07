@@ -7,10 +7,10 @@ class Flags(Table):
         self._schema = "aperature"
         self._table_name = "flags"
         self._index_col = "flag_id"
-        self._expected_cols = [
+        self._expected_cols = set([
             "flag_id",
             "description"
-        ]
+        ])
         self._creation_sql = "".join(["""
             CREATE TABLE IF NOT EXISTS """, self._schema, ".", self._table_name, """
             (
