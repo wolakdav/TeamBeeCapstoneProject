@@ -2,7 +2,7 @@ import abc
 from enum import Enum
 
 class Flags(Enum):
-  # Documentation of flags can be found in [TODO].
+  # Documentation of flags can be found in flags.txt.
   INVALID = 1
   CONTAINS_NULL = 2
 
