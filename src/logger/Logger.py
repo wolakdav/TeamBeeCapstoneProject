@@ -1,34 +1,39 @@
 import datetime
+import os
+from enum import Enum
+
+class Severity(Enum):
+    DEBUG = 1
+    INFO = 2
+    WARNING = 3
+    ERROR = 4
 
 class Logger:
-    def __init__(self, debug=False, logfile='log.txt'):
+    
+    def __init__(self, debug=False, filename='log.txt'):
         self.debug = debug
-        self.logfile = logfile
-        self.f = open(logfile,'a+')
+        self.filename = filename
+        self._f = open(self.filename,'a+')
 
-    def __open(self):
-        self.f = open(self.logfile,'a+')
+        self._f.write('[{}]  {}  {} \n'.format( 'INFO', str(datetime.datetime.now()), 'Logger started.'))
 
-    def __close(self):
-        self.f.close()
 
-    def log(self, message, severity='INFO'):
-        self.__open()
+    def log(self, message, severity=Severity.INFO):
         timestamp = datetime.datetime.now()
 
-        if severity == 'ERROR':
-            self.f.write('[ERROR]  ' + str(timestamp) + '  ' + message + '\r\n')
-        elif severity == 'INFO':
-            self.f.write('[INFO]  ' + str(timestamp) + '  '+ message + '\r\n')
-        elif severity == 'WARNING':
-            self.f.write('[WARNING]  ' + str(timestamp) + '  '+ message + '\r\n')
-        elif severity == 'DEBUG':
+        if severity == Severity.ERROR:
+            self._f.write('[{}]  {}  {} \n'.format('ERROR', str(timestamp), message))
+        elif severity == Severity.INFO:
+            self._f.write('[{}]  {}  {} \n'.format('INFO', str(timestamp), message))
+        elif severity == Severity.WARNING:
+            self._f.write('[{}]  {}  {} \n'.format('WARNING', str(timestamp), message))
+        elif severity == Severity.DEBUG:
             if self.debug:
-                self.f.write('[DEBUG]  ' + str(timestamp) + '  '+ message + '\r\n')
+                self._f.write('[{}]  {}  {} \n'.format('DEBUG', str(timestamp), message))
+                
+        self._f.flush()
+        os.fsync(self._f)
 
-        self.__close()
     def shutdown(self):
-        self.__open()
-        timestamp = datetime.datetime.now()
-        self.f.write('[INFO]  ' + str(timestamp) + '  '+ 'Logger shutting down.' + '\r\n')
-        self.__close()
+        self._f.write('[{}]  {}  {} \n'.format('INFO', str(datetime.datetime.now()), 'Logger shutting down.'))
+        self._f.close()
