@@ -1,4 +1,4 @@
-from src.tables.table import Table
+from .table import Table
 
 class Flags(Table):
 
