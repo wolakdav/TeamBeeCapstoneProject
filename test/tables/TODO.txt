@@ -11,4 +11,7 @@ when done, take one last pass at the different error messages to make sure they'
 
 
 for CTran_Data.create_table(), see if can cause that panda read to throw a ValueError exception, or whatever it is that Pandas throws on error
-    try feeding it a faulty sevice_date or something
+    try feeding it a faulty sevice_date or index_col
+
+
+possibly have the weak(?) tables have instances of their tables as members so they can use their data to make foreign keys
