@@ -18,18 +18,18 @@ class Logger:
         self._f.write('[{}]  {}  {} \n'.format( 'INFO', str(datetime.datetime.now()), 'Logger started.'))
 
 
-    def log(self, message, severity=Severity.INFO):
+    def log(self, message, severity = Severity.INFO):
         timestamp = datetime.datetime.now()
 
         if severity == Severity.ERROR:
-            self._f.write('[{}]  {}  {} \n'.format('ERROR', str(timestamp), message))
+            self._f.write('[ERROR]  {}  {} \n'.format(timestamp, message))
         elif severity == Severity.INFO:
-            self._f.write('[{}]  {}  {} \n'.format('INFO', str(timestamp), message))
+            self._f.write('[INFO]  {}  {} \n'.format(timestamp, message))
         elif severity == Severity.WARNING:
-            self._f.write('[{}]  {}  {} \n'.format('WARNING', str(timestamp), message))
+            self._f.write('[WARNING]  {}  {} \n'.format(timestamp, message))
         elif severity == Severity.DEBUG:
             if self.debug:
-                self._f.write('[{}]  {}  {} \n'.format('DEBUG', str(timestamp), message))
+                self._f.write('[DEBUG]  {}  {} \n'.format(timestamp, message))
                 
         self._f.flush()
         os.fsync(self._f)
