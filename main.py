@@ -1,5 +1,6 @@
-from flaggers.flagger import flaggers
+from flaggers.flagger import flaggers, null_flags
 from flaggers.dataRow import dataRow
+import json
 
 # These structures are only to demosntrate that flaggers work,
 # and not a final say on what our data should look like.
@@ -15,27 +16,28 @@ data_dict = {"Placeholder" : [], "Data" : []}
 #Helper function that tests all Null flags individually (one at a time)
 #@positive=true, tests so that flags 'fire'
 #@positive=false, test so that flags don't 'fire'
-def testNullFlagsIndividual(positive):
+def testNullFlagsIndividual(null_flagger, positive):
 	corr_cnt = 0  #count for correct null flag checks
 	inc_cnt = 0	  #count for incorrect null flag checks
 	#Step 1: Transform Nulls class fields into dict, and then transform into keys and vals lists
-	nulls = Nulls()  					#create Nulls object
-	nulls_flags = vars(nulls)			#create dict from object
-	flag_names = list(nulls_flags.keys())		#create keys list from dict
-	flag_vals = list(nulls_flags.values())	#create vals list from dict
+	data = dataRow()					#create Nulls object
+	data_vars = vars(data)			#create dict from object
+	data_names = list(data_vars.keys())		#create keys list from dict
+	data_vals = list(data_vars.values())	#create vals list from dict
 
 	#Step 2: Check for each flag and its value
-	for i in range(len(nulls_flags)):
-		if(positive): json_obj = '{"' + flag_names[i] + '":null}'	#create JSON object with 1 value: current flag
-		else: json_obj = '{"' + flag_names[i] + '":"good"}'
+	for i in range(len(data_vars)):
+		if(positive): json_obj = '{"' + data_names[i] + '":null}'	#create JSON object with 1 value: current flag
+		else: json_obj = '{"' + data_names[i] + '":"good"}'
 		
 		python_obj = json.loads(json_obj)				#create Python object from JSON object
 
-		ret_flag = null_check(python_obj)		#check Python object with 1 value for a flag
+		ret_flag = null_flagger.flag(python_obj)		#check Python object with 1 value for a flag
+		print(ret_flag)
 
 		#Testing positive: should fire
 		if(positive and len(ret_flag) > 0): 
-			correct = ret_flag[0] == flag_vals[i]
+			correct = ret_flag[0] == null_flags[i]
 			if(correct): corr_cnt += 1
 			else: inc_cnt += 1
 			#print('NULL CHECK -', flag_names[i], ':', correct)
@@ -49,7 +51,7 @@ def testNullFlagsIndividual(positive):
 	else: print('Testing INDIVIDUAL for Negatives [null flags shouldn\'t fire = not return null flag]')
 	print('Correct:', corr_cnt)
 	print('Incorrect:', inc_cnt)
-	print('Success Rate:', (corr_cnt / len(nulls_flags)) * 100, '%')
+	print('Success Rate:', (corr_cnt / len(data_names)) * 100, '%')
 	print('-------------------------------------------------------------------------------')
 
 
@@ -96,8 +98,4 @@ def runNullTests():
 
 for flagger in flaggers:
 	#currently on a null flagger
-	#if(flagger.name == 'Null')
-
-data = dataRow()
-
-print(data)
+	if(flagger.name == 'Null'): testNullFlagsIndividual(flagger, True)

@@ -4,7 +4,7 @@ from .flagger import Flagger, Flags, flaggers
 class Null(Flagger):
   name = 'Null'
 
-  def flag(data):
+  def flag(self, data):
     #all null flags will be appended to the list
     null_flags = []
 
@@ -115,5 +115,7 @@ class Null(Flagger):
     #Checks if trip_id is Null
     if (hasattr(data, "trip_id") or 'trip_id' in data) and data["trip_id"] is None:
       null_flags.append(Flags.TRIP_ID_NULL)
+
+    return null_flags
      
 flaggers.append(Null())
