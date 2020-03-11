@@ -7,7 +7,6 @@ class Null(Flagger):
   def flag(data):
     #all null flags will be appended to the list
     null_flags = []
->>>>>>> Stashed changes
 
     #Checks if service_date is Null
     if (hasattr(data, "service_date") or 'service_date' in data) and data["service_date"] is None: 

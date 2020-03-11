@@ -2,7 +2,9 @@ import abc
 from enum import Enum
 
 class Flags(Enum):
+  ###################################################
   # Documentation of flags can be found in flags.txt.
+  ###################################################
 
   #Null flags
   SERVICE_DATE_NULL = 1
@@ -32,6 +34,7 @@ class Flags(Enum):
   DATA_SOURCE_NULL = 25
   SCHEDULE_STATUS_NULL = 26
   TRIP_ID_NULL = 27
+
 
 class Flagger(abc.ABC):
   @abc.abstractmethod
