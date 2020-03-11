@@ -1,3 +1,8 @@
+from src.tables import CTran_Data
+from src.tables import Duplicated_Data
+from src.tables import Flagged_Data
+from src.tables import Flags
+
 
 ##############################################################################
 # Private Classes
@@ -14,14 +19,58 @@ class _Option():
 # Public Functions
 
 def cli():
-    should_exit = False
+    ctran = CTran_Data(verbose=True)
+    engine_url = ctran.get_engine().url
+    duplicates = Duplicated_Data(verbose=True, engine=engine_url)
+    flagged = Flagged_Data(verbose=True, engine=engine_url)
+    flags = Flags(verbose=True, engine=engine_url)
+
     options = [
         _Option("(or ctrl-d) Exit.", lambda: "Exit"),
+        _Option("Sub-menu: DB Operations", lambda: db_cli(ctran, duplicates, flagged, flags))
     ]
 
+    return _menu(options)
+
+###########################################################
+
+def db_cli(ctran, duplicates, flagged, flags):
+    def ctran_info():
+        query = ctran.get_full_table()
+        if query is None:
+            print("WARNING: no data returned.")
+        else:
+            query.info()
+
+    options = [
+        _Option("(or ctrl-d) Exit.", lambda: "Exit"),
+        _Option("Print engine.", lambda: print(ctran.get_engine())),
+        _Option("Create aperature schema.", ctran.create_schema),
+        _Option("Delete aperature schema.", ctran.delete_schema),
+        _Option("Create ctran_data table.", ctran.create_table),
+        _Option("Create duplicates table.", duplicates.create_table),
+        _Option("Create flagged_data table.", flagged.create_table),
+        _Option("Create flags table.", flags.create_table),
+        _Option("Delete ctran_data table.", ctran.delete_table),
+        _Option("Delete duplicates table.", duplicates.delete_table),
+        _Option("Delete flagged_data table.", flagged.delete_table),
+        _Option("Delete flags table.", flags.delete_table),
+        _Option("Query ctran_data and print ctran_data.info().", ctran_info)
+    ]
+
+    return _menu(options)
+
+###############################################################################
+# Private Functions
+
+def _menu(options):
+    if len(options) == 0:
+        return
+    
+    should_exit = False
     while not should_exit:
         print()
-        print("This is the StopSpot data pipeline. Please select what you would like to do:")
+        print("This is the Database Operations sub-menu. Please select what you would like to do:")
         print()
         print()
         for i in range(len(options)):
@@ -37,9 +86,7 @@ def cli():
         if options[option].func_pointer() == "Exit":
             should_exit = True
 
-
-###############################################################################
-# Private Functions
+###########################################################
 
 def _get_int(min_value, max_value, cli_symbol="> "):
     should_continue = True
