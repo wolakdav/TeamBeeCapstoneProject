@@ -8,15 +8,13 @@ class Severity(Enum):
     WARNING = 3
     ERROR = 4
 
-class Logger:
-    
-    def __init__(self, debug=False, filename='log.txt'):
+class Logger:    
+    def start(self, filename='log.txt', debug=False):
         self.debug = debug
-        self.filename = filename
-        self._f = open(self.filename,'a+')
+        self._f = open(filename,'a+')
 
-        self._f.write('[{}]  {}  {} \n'.format( 'INFO', str(datetime.datetime.now()), 'Logger started.'))
-
+        if self.debug:
+            self._f.write('[DEBUG]  {}  {} \n'.format( str(datetime.datetime.now()), 'Logger started.'))
 
     def log(self, message, severity = Severity.INFO):
         timestamp = datetime.datetime.now()
@@ -34,6 +32,7 @@ class Logger:
         self._f.flush()
         os.fsync(self._f)
 
-    def shutdown(self):
-        self._f.write('[{}]  {}  {} \n'.format('INFO', str(datetime.datetime.now()), 'Logger shutting down.'))
+    def stop(self):
+        if self.debug:
+            self._f.write('[DEBUG]  {}  {} \n'.format( str(datetime.datetime.now()), 'Logger shutting down.'))
         self._f.close()

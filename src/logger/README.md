@@ -1,14 +1,12 @@
 ## Usage
 
-`from logger import Logger`
+`from logger import logger`
 
 `from logger import Severity`
 
 
-`log = Logger()`
+`logger.start(filename='mylog.txt', debug=True)`
 
-`log = Logger(debug=True, filename='mylog.txt')`
+`logger.log('Something went wrong', Severity.ERROR)`
 
-`log.log('Something went wrong', Severity.ERROR)`
-
-`log.shutdown()`
+`logger.stop()`
