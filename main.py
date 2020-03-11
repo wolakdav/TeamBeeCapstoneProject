@@ -4,9 +4,12 @@ from flaggers.flagger import flaggers
 # and not a final say on what our data should look like.
 data_dict = {"Placeholder" : [], "Data" : []}
 
-for data in data_dict.keys():
-  for flagger in flaggers:
-    flags = flagger.flag(data)
-    data_dict[data] += flags
+# for data in data_dict.keys():
+#   for flagger in flaggers:
+#     flags = flagger.flag(data)
+#     data_dict[data] += flags
 
-print(data_dict)
+# print(data_dict)
+
+for flagger in flaggers: 
+	print(flagger.name)

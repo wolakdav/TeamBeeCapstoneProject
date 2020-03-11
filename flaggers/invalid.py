@@ -5,4 +5,4 @@ class Invalid(Flagger):
     # YOUR DATA IS PURE GARBAGE.
     return [Flags.INVALID]
      
-flaggers.append(Invalid())
+#flaggers.append(Invalid())
