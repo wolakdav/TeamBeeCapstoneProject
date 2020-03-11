@@ -1,8 +1,10 @@
 from .flagger import Flagger, Flags, flaggers
 
 class Invalid(Flagger):
-  def flag(self, data):
-    # YOUR DATA IS PURE GARBAGE.
-    return [Flags.INVALID]
+	name = 'Invalid'
+	def flag(data):
+	# YOUR DATA IS PURE GARBAGE.
+		return 1 
+	#[Flags.INVALID]
      
 #flaggers.append(Invalid())

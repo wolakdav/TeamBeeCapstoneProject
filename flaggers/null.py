@@ -3,8 +3,11 @@ from .flagger import Flagger, Flags, flaggers
 #data is a row of data from the db: parsed JSON
 class Null(Flagger):
   name = 'Null'
-  def flag(self, data):
-    null_flags = []     #all null flags will be appended to the list
+
+  def flag(data):
+    #all null flags will be appended to the list
+    null_flags = []
+>>>>>>> Stashed changes
 
     #Checks if service_date is Null
     if (hasattr(data, "service_date") or 'service_date' in data) and data["service_date"] is None: 
