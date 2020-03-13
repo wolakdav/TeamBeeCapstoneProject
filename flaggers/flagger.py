@@ -37,6 +37,11 @@ class Flags(Enum):
 
 
 class Flagger(abc.ABC):
+  # Name must be overwritten
+  @property
+  def name(self):
+    raise NotImplementedError
+
   @abc.abstractmethod
   def flag(self, data):
     # Child classes must return a lit of flags.

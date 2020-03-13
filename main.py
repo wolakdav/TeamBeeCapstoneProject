@@ -1,99 +1,113 @@
-from flaggers.flagger import flaggers, Flags
-from flaggers.dataRow import dataRow
-import json
-
-# These structures are only to demosntrate that flaggers work,
-# and not a final say on what our data should look like.
-data_dict = {"Placeholder" : [], "Data" : []}
-
-# for data in data_dict.keys():
-#   for flagger in flaggers:
-#     flags = flagger.flag(data)
-#     data_dict[data] += flags
-
-# print(data_dict)
-
-#Helper function that tests all Null flags individually (one at a time)
-#@positive=true, tests so that flags 'fire'
-#@positive=false, test so that flags don't 'fire'
-def testNullFlagsIndividual(null_flagger, positive):
-	corr_cnt = 0  #count for correct null flag checks
-	inc_cnt = 0	  #count for incorrect null flag checks
-	#Step 1: Transform Nulls class fields into dict, and then transform into keys and vals lists
-	data = dataRow()					#create Nulls object
-	data_vars = vars(data)			#create dict from object
-	data_names = list(data_vars.keys())		#create keys list from dict
-	data_vals = list(data_vars.values())	#create vals list from dict
-
-	#Step 2: Check for each flag and its value
-	for i in range(len(data_vars)):
-		if(positive): json_obj = '{"' + data_names[i] + '":null}'	#create JSON object with 1 value: current flag
-		else: json_obj = '{"' + data_names[i] + '":"good"}'
-		
-		python_obj = json.loads(json_obj)				#create Python object from JSON object
-
-		ret_flag = null_flagger.flag(python_obj)	#check Python object with 1 value for a flag
-
-		#Testing positive: should fire
-		if(positive and len(ret_flag) > 0): 
-			correct = ret_flag[0].value == i+1		#i + 1 since flags start from 1
-			if(correct): corr_cnt += 1
-			else: inc_cnt += 1
-			#print('NULL CHECK -', ret_flag[0].name, ':', correct)
-		#Testing negative: shouldn't fire
-		else:
-			if(len(ret_flag) == 0): corr_cnt += 1
-			else: inc_cnt += 1
-
-	print('-------------------------------------------------------------------------------')
-	if(positive): print('Testing INDIVIDUAL for Positives [null flags should fire = return null_flag]')
-	else: print('Testing INDIVIDUAL for Negatives [null flags shouldn\'t fire = not return null flag]')
-	print('Correct:', corr_cnt)
-	print('Incorrect:', inc_cnt)
-	print('Success Rate:', (corr_cnt / len(data_names)) * 100, '%')
-	print('-------------------------------------------------------------------------------')
+from src.tables import CTran_Data
+from src.tables import Duplicated_Data
+from src.tables import Flagged_Data
+from src.tables import Flags
 
 
-#Tests full object (not one flag at a time)
-def testNullFlagsFull(null_flagger, positive):
-	#Step 1: Transform Nulls class fields into dict, and then transform into keys and vals lists
-	data = dataRow()
-	data_vars = vars(data)			#create dict from object, to import all the fields
-	data_names = list(data_vars.keys())		#create keys list from dict
-	data_vals = list(data_vars.values())	#create vals list from dict
-	incorrect = 0
+##############################################################################
+# Private Classes
 
-	#positive = must return a list of flags
-	if(positive):
-		ret_flags = flagger.flag(data_vars)
-		if(len(ret_flags) == len(data_vars)): correct = len(ret_flags)		
-		else: incorrect = len(data_vars) - len(ret_flags)
-	#Negative = must return empty list
-	else: 
-		for i in range(len(data_vars)):
-			data_vars[data_names[i]] = 'good_data'
+class _Option():
+    # func_pointer should return str "Exit" iff that option should cause main to
+    # exit.
+    def __init__(self, msg, func_pointer):
+        self.msg = msg
+        self.func_pointer = func_pointer
 
-		ret_flags = null_flagger.flag(data_vars)
-		if(len(ret_flags) == 0): correct = len(data_vars)
-		else: incorrect = len(data_vars) - len(ret_flags)
 
-	print('-------------------------------------------------------------------------------')
-	if(positive): print('Testing  FULL for Positives [null flags should fire = return ret_flag list]')
-	else: print('Testing FULL for Negatives [null flags shouldn\'t fire = empty ret_flag list]')
-	print('Correct:', correct)
-	print('Incorrect:', incorrect)
-	print('Success rate:', (correct / len(data_vars)) * 100, '%')
-	print('-------------------------------------------------------------------------------')
+###############################################################################
+# Public Functions
 
-def runNullTests(flagger):
-	#Calling Individual test functions
-	testNullFlagsIndividual(flagger, True)
-	testNullFlagsIndividual(flagger, False)
+def cli():
+    ctran = CTran_Data(verbose=True)
+    engine_url = ctran.get_engine().url
+    duplicates = Duplicated_Data(verbose=True, engine=engine_url)
+    flagged = Flagged_Data(verbose=True, engine=engine_url)
+    flags = Flags(verbose=True, engine=engine_url)
 
-	#Calling Full test functions
-	testNullFlagsFull(flagger, True)
-	testNullFlagsFull(flagger, False)
+    options = [
+        _Option("(or ctrl-d) Exit.", lambda: "Exit"),
+        _Option("Sub-menu: DB Operations", lambda: db_cli(ctran, duplicates, flagged, flags))
+    ]
 
-for flagger in flaggers:
-	#currently on a null flagger
-	if(flagger.name == 'Null'): runNullTests(flagger)
+    return _menu(options)
+
+###########################################################
+
+def db_cli(ctran, duplicates, flagged, flags):
+    def ctran_info():
+        query = ctran.get_full_table()
+        if query is None:
+            print("WARNING: no data returned.")
+        else:
+            query.info()
+
+    options = [
+        _Option("(or ctrl-d) Exit.", lambda: "Exit"),
+        _Option("Print engine.", lambda: print(ctran.get_engine())),
+        _Option("Create aperature schema.", ctran.create_schema),
+        _Option("Delete aperature schema.", ctran.delete_schema),
+        _Option("Create ctran_data table.", ctran.create_table),
+        _Option("Create duplicates table.", duplicates.create_table),
+        _Option("Create flagged_data table.", flagged.create_table),
+        _Option("Create flags table.", flags.create_table),
+        _Option("Delete ctran_data table.", ctran.delete_table),
+        _Option("Delete duplicates table.", duplicates.delete_table),
+        _Option("Delete flagged_data table.", flagged.delete_table),
+        _Option("Delete flags table.", flags.delete_table),
+        _Option("Query ctran_data and print ctran_data.info().", ctran_info)
+    ]
+
+    return _menu(options)
+
+###############################################################################
+# Private Functions
+
+def _menu(options):
+    if len(options) == 0:
+        return
+    
+    should_exit = False
+    while not should_exit:
+        print()
+        print("This is the Database Operations sub-menu. Please select what you would like to do:")
+        print()
+        print()
+        for i in range(len(options)):
+            print(str(i) + ": " + options[i].msg)
+        print()
+
+        option = None
+        try:
+            option = _get_int(0, len(options)-1)
+        except EOFError:
+            option = 0
+
+        if options[option].func_pointer() == "Exit":
+            should_exit = True
+
+###########################################################
+
+def _get_int(min_value, max_value, cli_symbol="> "):
+    should_continue = True
+    while should_continue:
+        try:
+            option = input(cli_symbol)
+            option = int(option)
+
+            if option < min_value or option > max_value:
+                print("{" + str(option) + "} is not within range [" + str(min_value) + ", " + str(max_value) + "]; try again.")
+            else:
+                should_continue = False
+
+        except ValueError:
+            print("Please enter an integer.")
+
+    return option
+
+
+###############################################################################
+# Main
+
+if __name__ == "__main__":
+    cli()

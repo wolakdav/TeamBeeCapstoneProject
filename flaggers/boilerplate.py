@@ -8,6 +8,8 @@
 from .flagger import Flagger, Flags, flaggers
 
 class Boiler(Flagger):
+  # Name is used for testing, but must be overwritten.
+  name = 'Boilerplate'
   def flag(self, data):
 
     # ...
