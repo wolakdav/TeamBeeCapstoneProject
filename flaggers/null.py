@@ -4,11 +4,11 @@ from .flagger import Flagger, Flags, flaggers
 class Null(Flagger):
   name = 'Null'
   columns_flag_dict = {
+    'row_id': Flags.ROW_ID_NULL,
     'service_date' : Flags.SERVICE_DATE_NULL,
     'vehicle_number' : Flags.VEHICLE_NUMBER_NULL,
     'leave_time' : Flags.LEAVE_TIME_NULL,
     'train' : Flags.TRAIN_NULL,
-    'badge' : Flags.BADGE_NULL,
     'route_number' : Flags.ROUTE_NUMBER_NULL,
     'direction' : Flags.DIRECTION_NULL,
     'service_key' : Flags.SERVICE_KEY_NULL,

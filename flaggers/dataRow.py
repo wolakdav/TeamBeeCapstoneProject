@@ -4,7 +4,6 @@ class dataRow():
 		self.vehicle_number = None
 		self.leave_time = None
 		self.train = None
-		self.badge = None
 		self.route_number = None
 		self.direction = None
 		self.service_key = None

@@ -1,9 +1,0 @@
-diff --git a/.gitignore b/.gitignore
-index 762cc89..9f724da 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -133,3 +133,4 @@ dmypy.json
- 
- # pytype static type analyzer
- .pytype/
-+*.swp

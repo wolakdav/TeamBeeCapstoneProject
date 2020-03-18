@@ -15,7 +15,7 @@ class Boiler(Flagger):
     # ...
 
     # Must return a list of flags. Flags are defined in flagger.py
-    return [Flags.INVALID, Flags.CONTAINS_NULL]
+    return [Flags.ROW_ID_NULL, Flags.DIRECTION_NULL]
      
 # Append an instance of your flagger to this list.
 # Change Boiler to be your class.
