@@ -6,7 +6,8 @@ This codebase can read environment variables to determine the username,
 password, hostname, and database name it should work with. These are mapped to
 a corresponding environment variable as seen below. To activate this
 functionality, this can either be set in main.py or by creating environment
-variable `$PIPELINE_ENV_DATA` with *any* value.
+variable `$PIPELINE_ENV_DATA` with *any* value (this will take priority over
+the set value in main.py).
 
 - username: `$PIPELINE_USER`
 - password: `$PIPELINE_PASSWD`
