@@ -89,7 +89,7 @@ class CTran_Data(Table):
         try:
             sample_data = pandas.read_csv(csv_location, parse_dates=["service_date"])
 
-        except FileNotFoundError as error:
+        except (FileNotFoundError, ValueError) as error:
             print("Pandas:", error)
             print("Cannot continue table creation, cancelling.")
             return False
