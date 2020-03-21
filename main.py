@@ -9,8 +9,6 @@ from src.tables import Flags
 # Private Classes
 
 class _Option():
-    # func_pointer should return str "Exit" iff that option should cause main to
-    # exit.
     def __init__(self, msg, func_pointer):
         self.msg = msg
         self.func_pointer = func_pointer
@@ -19,7 +17,6 @@ class _Option():
 ###############################################################################
 # Public Functions
 
-# read_env_data will be overwritten if $PIPELINE_ENV_DATA exists.
 def cli(read_env_data=False):
     ctran, duplicates, flagged, flags = _create_instances(read_env_data)
 
@@ -28,7 +25,7 @@ def cli(read_env_data=False):
         _Option("Sub-menu: DB Operations", lambda: db_cli(ctran, duplicates, flagged, flags))
     ]
 
-    return _menu(options)
+    return _menu("Welcome to the CTran Data Marking Pipeline.", options)
 
 ###########################################################
 
@@ -56,7 +53,7 @@ def db_cli(ctran, duplicates, flagged, flags):
         _Option("Query ctran_data and print ctran_data.info().", ctran_info)
     ]
 
-    return _menu(options)
+    return _menu("This is the Database Operations sub-menu.", options)
 
 ###############################################################################
 # Private Functions
@@ -91,14 +88,17 @@ def _create_instances(read_env_data):
 
 ###########################################################
 
-def _menu(options):
+# Option.func_pointer should return str "Exit" iff that option should cause the
+# menu it is in to exit.
+def _menu(title, options):
     if len(options) == 0:
         return
     
+    msg = " ".join([str(title), "Please select what you would like to do:"])
     should_exit = False
     while not should_exit:
         print()
-        print("This is the Database Operations sub-menu. Please select what you would like to do:")
+        print(msg)
         print()
         print()
         for i in range(len(options)):
