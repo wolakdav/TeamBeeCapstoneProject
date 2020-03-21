@@ -18,11 +18,18 @@ class _Option():
 # Public Functions
 
 def cli(read_env_data=False):
+    def create_hive():
+        flags.create_table()
+        service_periods.create_table()
+        flagged.create_table()
+
     ctran, flagged, flags, service_periods = _create_instances(read_env_data)
 
     options = [
         _Option("(or ctrl-d) Exit.", lambda: "Exit"),
-        _Option("Sub-menu: DB Operations", lambda: db_cli(ctran, flagged, flags, service_periods))
+        _Option("[dev tool] Create Aperature, the Portal mock DB [dev tool].", lambda: ctran.create_table()),
+        _Option("Create Hive, the output point of the Data Pipeline.", lambda: create_hive()),
+        _Option("Sub-menu: DB Operations", lambda: db_cli(ctran, flagged, flags, service_periods)),
     ]
 
     return _menu("Welcome to the CTran Data Marking Pipeline.", options)
