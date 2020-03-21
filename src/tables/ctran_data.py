@@ -94,9 +94,7 @@ class CTran_Data(Table):
             print("Cannot continue table creation, cancelling.")
             return False
 
-        # You may be tempted to attempt to optimize this by doing list
-        # comparisons, but that can be weirdly unpredictable.
-        if set(list(sample_data)) != self._expected_cols:
+        if not self._check_cols(sample_data):
             self._print("ERROR: the columns of read data does not match the specified columns.")
             return False
 

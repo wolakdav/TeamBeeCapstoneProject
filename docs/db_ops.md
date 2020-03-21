@@ -8,6 +8,7 @@ for the different tables, as well as creating and deleting the tables as well.
 Some subclasses of Table, such as `CTran_Data`, will fill the table with actual
 data.  
 These are the subclasses of Table:  
+
 - `CTran_Data`  
 - `Flagged_Data`  
 - `Duplicated_Data`  
@@ -16,6 +17,7 @@ These are the subclasses of Table:
 ## Methods Provided by Table
 
 ##### `__init__(user=None, passwd=None, hostname="localhost", db_name="aperture", verbose=False, engine=None)`
+
 This requires `user`, `passwd`, `hostname`, and `db_name` to create the engine.
 None of this data is kept after the engine has been created. If `user` and
 `passwd` are not supplied, a prompt will require the user to enter them.
@@ -49,9 +51,12 @@ This will delete the table the instance represents.
 
 ## Extending Table
 
+Subclasses should **not** alter `self._engine` in any capacity.
+
+### Abstract Members
+
 Subclasses should initialize these abstract members in order for Table to
 function correctly.  
-Additionally, subclasses should not alter `self._engine` in any capacity.
 
 ##### `self._schema`
 This member will contain the schema name as a string.
@@ -68,3 +73,22 @@ member, see Panda's documentation on `Pandas.DataFrame.read_sql`.
 ##### `self._expected_cols`
 This member will contain a set of strings of the columns in the table for
 validation purposes.
+
+### Protected Methods
+
+#### `bool self._check_cols(sample_df)`
+
+This method will check that the columns of `sample_df` match the columns of
+self, and return a boolean reflecting this check.
+
+#### `str self._prompt(prompt="", hide_input=False)`
+
+This method will prompt STDOUT with `prompt` and read from STDIN the returned
+string. `hide_input` hides the input from appearing in the terminal as it is
+typed; this is necessary for sensitive data, such as passwords.
+
+#### `void self._print(string, obj=None, force=False)`
+
+This method will is used to support verbose dialog. If `obj` is supplied, it is
+printed after `string`. If `force` is `True`, then the message will print
+regardless of the value in `self.verbose`.

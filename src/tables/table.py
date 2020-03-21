@@ -6,16 +6,21 @@ from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
 
 
-""" Subclasses should declare/initialize:
+""" Extending Table
+Subclasses should not alter self._engine in any capacity.
+For more, see docs/db_ops.md
+
 str self._schema
+
 str self._table_name
+
 str self._index_col
     For the purposes of loading via Pandas' index_col parameter.
+
 str set self._expected_cols
     This will contain a set of strings of the columns in the table.
-str self._creation_sql
 
-Additionally, subclasses should not alter self._engine in any capacity.
+str self._creation_sql
 """
 class Table(abc.ABC):
 
@@ -65,9 +70,7 @@ class Table(abc.ABC):
             print("Pandas:", error)
             return None
         
-        # You may be tempted to attempt to optimize this by doing list
-        # comparisons, but that can be weirdly unpredictable.
-        if set(list(df)) != self._expected_cols:
+        if not self._check_cols(df):
             self._print("ERROR: the columns of read data does not match the specified columns.")
             return None
 
@@ -161,13 +164,14 @@ class Table(abc.ABC):
         return True
 
     ###########################################################################
-    # Private Methods
+    # Protected Methods
 
-    def _build_engine(self, user, passwd, hostname, db_name):
-        engine_info = ["postgresql://", user, ":", passwd, "@", hostname, "/", db_name]
-        self._engine = create_engine("".join(engine_info))
-        
-        self._print("Your engine has been created: ", self._engine)
+    def _check_cols(self, sample_df):
+        # You may be tempted to attempt to optimize this by doing list
+        # comparisons, but that can be weirdly unpredictable.
+        if set(list(sample_df)) != self._expected_cols:
+            return False
+
         return True
 
     #######################################################
@@ -197,3 +201,13 @@ class Table(abc.ABC):
         else:
             print(string, end="")
             print(obj)
+
+    ###########################################################################
+    # Private Methods
+
+    def _build_engine(self, user, passwd, hostname, db_name):
+        engine_info = ["postgresql://", user, ":", passwd, "@", hostname, "/", db_name]
+        self._engine = create_engine("".join(engine_info))
+        
+        self._print("Your engine has been created: ", self._engine)
+        return True
