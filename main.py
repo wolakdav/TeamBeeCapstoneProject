@@ -39,12 +39,14 @@ def db_cli(ctran, flagged, flags):
     options = [
         _Option("(or ctrl-d) Exit.", lambda: "Exit"),
         _Option("Print engine.", lambda: print(ctran.get_engine())),
-        _Option("Create aperture schema.", ctran.create_schema),
-        _Option("Delete aperture schema.", ctran.delete_schema),
+        _Option("[dev tool] Create aperture schema [dev tool].", ctran.create_schema),
+        _Option("[dev tool] Delete aperture schema [dev tool].", ctran.delete_schema),
         _Option("[dev tool] Create mock ctran_data table [dev tool].", ctran.create_table),
+        _Option("[dev tool] Delete mock ctran_data table [dev tool].", ctran.delete_table),
+        _Option("Create hive schema.", flags.create_schema),
+        _Option("Delete hive schema.", flags.delete_schema),
         _Option("Create flagged_data table.", flagged.create_table),
         _Option("Create flags table.", flags.create_table),
-        _Option("[dev tool] Delete mock ctran_data table [dev tool].", ctran.delete_table),
         _Option("Delete flagged_data table.", flagged.delete_table),
         _Option("Delete flags table.", flags.delete_table),
         _Option("Query ctran_data and print ctran_data.info().", ctran_info)
