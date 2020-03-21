@@ -26,26 +26,16 @@ class Table(abc.ABC):
     def __init__(self, user=None, passwd=None, hostname="localhost", db_name="aperature", verbose=False, engine=None):
         self.verbose = verbose
         self._chunksize = 1000
-        self._engine = None
 
         if engine is not None:
             self._engine = create_engine(engine)
 
         else:
-            user = None
-            passwd = None
-            hostname = hostname
-            db_name = db_name
-
             if user is None:
                 user = self._prompt("Enter username: ")
-            else:
-                user = user
 
             if passwd is None:
                 passwd = self._prompt("Enter password: ", hide_input=True)
-            else:
-                passwd = passwd
 
             self._build_engine(user, passwd, hostname, db_name)
 
