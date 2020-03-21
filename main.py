@@ -1,3 +1,4 @@
+import os
 from src.tables import CTran_Data
 from src.tables import Duplicated_Data
 from src.tables import Flagged_Data
@@ -18,12 +19,9 @@ class _Option():
 ###############################################################################
 # Public Functions
 
-def cli():
-    ctran = CTran_Data(verbose=True)
-    engine_url = ctran.get_engine().url
-    duplicates = Duplicated_Data(verbose=True, engine=engine_url)
-    flagged = Flagged_Data(verbose=True, engine=engine_url)
-    flags = Flags(verbose=True, engine=engine_url)
+# read_env_data will be overwritten if $PIPELINE_ENV_DATA exists.
+def cli(read_env_data=False):
+    ctran, duplicates, flagged, flags = _create_instances(read_env_data)
 
     options = [
         _Option("(or ctrl-d) Exit.", lambda: "Exit"),
@@ -62,6 +60,36 @@ def db_cli(ctran, duplicates, flagged, flags):
 
 ###############################################################################
 # Private Functions
+
+def _create_instances(read_env_data):
+    try:
+        if not read_env_data and os.environ["PIPELINE_ENV_DATA"]:
+            read_env_data = True
+    except KeyError as err:
+        pass
+
+    ctran = None
+    if read_env_data:
+        try:
+            user = os.environ["PIPELINE_USER"]
+            passwd = os.environ["PIPELINE_PASSWD"]
+            hostname = os.environ["PIPELINE_HOSTNAME"]
+            db_name = os.environ["PIPELINE_DB_NAME"]
+        except KeyError as err:
+            print("Could not read environment data " + str(err) + "; terminating.")
+            return
+
+        ctran = CTran_Data(user, passwd, hostname, db_name, verbose=True)
+    else:
+        ctran = CTran_Data(verbose=True)
+
+    engine_url = ctran.get_engine().url
+    duplicates = Duplicated_Data(verbose=True, engine=engine_url)
+    flagged = Flagged_Data(verbose=True, engine=engine_url)
+    flags = Flags(verbose=True, engine=engine_url)
+    return ctran, duplicates, flagged, flags
+
+###########################################################
 
 def _menu(options):
     if len(options) == 0:
