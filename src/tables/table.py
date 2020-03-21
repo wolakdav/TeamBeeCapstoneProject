@@ -23,7 +23,7 @@ class Table(abc.ABC):
     # Public Methods
 
     # passwd is not stored as member data, it is destroyed after use.
-    def __init__(self, user=None, passwd=None, hostname="localhost", db_name="aperature", verbose=False, engine=None):
+    def __init__(self, user=None, passwd=None, hostname="localhost", db_name="aperture", verbose=False, engine=None):
         self.verbose = verbose
         self._chunksize = 1000
 

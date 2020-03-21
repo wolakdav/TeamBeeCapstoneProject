@@ -45,8 +45,8 @@ def db_cli(ctran, duplicates, flagged, flags):
     options = [
         _Option("(or ctrl-d) Exit.", lambda: "Exit"),
         _Option("Print engine.", lambda: print(ctran.get_engine())),
-        _Option("Create aperature schema.", ctran.create_schema),
-        _Option("Delete aperature schema.", ctran.delete_schema),
+        _Option("Create aperture schema.", ctran.create_schema),
+        _Option("Delete aperture schema.", ctran.delete_schema),
         _Option("Create ctran_data table.", ctran.create_table),
         _Option("Create duplicates table.", duplicates.create_table),
         _Option("Create flagged_data table.", flagged.create_table),

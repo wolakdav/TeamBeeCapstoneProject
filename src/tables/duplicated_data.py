@@ -2,9 +2,9 @@ from .table import Table
 
 class Duplicated_Data(Table):
 
-    def __init__(self, user=None, passwd=None, hostname="localhost", db_name="aperature", verbose=False, engine=None):
+    def __init__(self, user=None, passwd=None, hostname="localhost", db_name="aperture", verbose=False, engine=None):
         super().__init__(user, passwd, hostname, db_name, verbose, engine)
-        self._schema = "aperature"
+        self._schema = "aperture"
         self._table_name = "duplicates"
         self._index_col = None
         self._expected_cols = set([

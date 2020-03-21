@@ -15,7 +15,7 @@ These are the subclasses of Table:
 
 ## Methods Provided by Table
 
-##### `__init__(user=None, passwd=None, hostname="localhost", db_name="aperature", verbose=False, engine=None)`
+##### `__init__(user=None, passwd=None, hostname="localhost", db_name="aperture", verbose=False, engine=None)`
 This requires `user`, `passwd`, `hostname`, and `db_name` to create the engine.
 None of this data is kept after the engine has been created. If `user` and
 `passwd` are not supplied, a prompt will require the user to enter them.
