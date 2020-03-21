@@ -12,7 +12,7 @@ class CTran_Data(Table):
         super().__init__(user, passwd, hostname, db_name, verbose, engine)
         self._schema = "aperture"
         self._table_name = "ctran_data"
-        self._index_col = "data_row"
+        self._index_col = "row_id"
         self._expected_cols = set([
             "service_date",
             "vehicle_number",
@@ -45,7 +45,7 @@ class CTran_Data(Table):
         self._creation_sql = "".join(["""
             CREATE TABLE IF NOT EXISTS """, self._schema, ".", self._table_name, """
             (
-                data_row BIGSERIAL PRIMARY KEY,
+                row_id BIGSERIAL PRIMARY KEY,
                 service_date DATE,
                 vehicle_number INTEGER,
                 leave_time INTEGER,
