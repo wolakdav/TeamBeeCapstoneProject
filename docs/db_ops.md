@@ -57,9 +57,6 @@ Subclasses should **not** alter `self._engine` in any capacity.
 Subclasses should initialize these abstract members in order for Table to
 function correctly.  
 
-##### `self._schema`
-This member will contain the schema name as a string.
-
 ##### `self._table_name`
 This member will contain the table name as a string.
 

@@ -10,8 +10,6 @@ from sqlalchemy.exc import SQLAlchemyError
 Subclasses should not alter self._engine in any capacity.
 For more, see docs/db_ops.md
 
-str self._schema
-
 str self._table_name
 
 str self._index_col
@@ -31,6 +29,7 @@ class Table(abc.ABC):
     def __init__(self, user=None, passwd=None, hostname="localhost", db_name="aperture", verbose=False, engine=None):
         self.verbose = verbose
         self._chunksize = 1000
+        self._schema = "hive"
 
         if engine is not None:
             self._engine = create_engine(engine)
