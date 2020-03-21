@@ -1,6 +1,6 @@
 import sys
 import pandas
-from src.tables.table import Table
+from .table import Table
 from sqlalchemy.exc import SQLAlchemyError
 
 class CTran_Data(Table):

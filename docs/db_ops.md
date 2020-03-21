@@ -2,15 +2,20 @@
 
 ## Overview
 
-Database operations are handled by Table and its various subclasses in
+Database operations are handled by `Table` and its various subclasses in
 `src/tables`. Currently, this includes creating and deleting the schemas used
 for the different tables, as well as creating and deleting the tables as well.
-Some subclasses of Table, such as CTran_Data, will fill the table with actual
-data.
+Some subclasses of Table, such as `CTran_Data`, will fill the table with actual
+data.  
+These are the subclasses of Table:  
+- `CTran_Data`  
+- `Flagged_Data`  
+- `Duplicated_Data`  
+- `Flags`  
 
 ## Methods Provided by Table
 
-##### `__init__(user=None, passwd=None, hostname="localhost", db_name="aperature, verbose=False, engine=None`
+##### `__init__(user=None, passwd=None, hostname="localhost", db_name="aperature", verbose=False, engine=None)`
 This requires `user`, `passwd`, `hostname`, and `db_name` to create the engine.
 None of this data is kept after the engine has been created. If `user` and
 `passwd` are not supplied, a prompt will require the user to enter them.
@@ -46,7 +51,7 @@ This will delete the table the instance represents.
 
 Subclasses should initialize these abstract members in order for Table to
 function correctly.  
-Additionally, subclasses should not alter self._engine in any capacity.
+Additionally, subclasses should not alter `self._engine` in any capacity.
 
 ##### `self._schema`
 This member will contain the schema name as a string.

@@ -1,7 +1,7 @@
-from src.tables.ctran_data import CTran_Data
-from src.tables.duplicated_data import Duplicated_Data
-from src.tables.flagged_data import Flagged_Data
-from src.tables.flags import Flags
+from src.tables import CTran_Data
+from src.tables import Duplicated_Data
+from src.tables import Flagged_Data
+from src.tables import Flags
 
 
 ##############################################################################
@@ -64,6 +64,9 @@ def db_cli(ctran, duplicates, flagged, flags):
 # Private Functions
 
 def _menu(options):
+    if len(options) == 0:
+        return
+    
     should_exit = False
     while not should_exit:
         print()
