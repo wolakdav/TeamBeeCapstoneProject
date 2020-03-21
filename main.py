@@ -2,6 +2,7 @@ import os
 from src.tables import CTran_Data
 from src.tables import Flagged_Data
 from src.tables import Flags
+from src.tables import Service_Periods
 
 
 ##############################################################################
@@ -17,18 +18,18 @@ class _Option():
 # Public Functions
 
 def cli(read_env_data=False):
-    ctran, flagged, flags = _create_instances(read_env_data)
+    ctran, flagged, flags, service_periods = _create_instances(read_env_data)
 
     options = [
         _Option("(or ctrl-d) Exit.", lambda: "Exit"),
-        _Option("Sub-menu: DB Operations", lambda: db_cli(ctran, flagged, flags))
+        _Option("Sub-menu: DB Operations", lambda: db_cli(ctran, flagged, flags, service_periods))
     ]
 
     return _menu("Welcome to the CTran Data Marking Pipeline.", options)
 
 ###########################################################
 
-def db_cli(ctran, flagged, flags):
+def db_cli(ctran, flagged, flags, service_periods):
     def ctran_info():
         query = ctran.get_full_table()
         if query is None:
@@ -47,8 +48,9 @@ def db_cli(ctran, flagged, flags):
         _Option("Delete hive schema.", flags.delete_schema),
         _Option("Create flagged_data table.", flagged.create_table),
         _Option("Create flags table.", flags.create_table),
+        _Option("Create service_periods table.", service_periods.create_table),
         _Option("Delete flagged_data table.", flagged.delete_table),
-        _Option("Delete flags table.", flags.delete_table),
+        _Option("Delete service_periods table.", flags.delete_table),
         _Option("Query ctran_data and print ctran_data.info().", ctran_info)
     ]
 
@@ -82,7 +84,8 @@ def _create_instances(read_env_data):
     engine_url = ctran.get_engine().url
     flagged = Flagged_Data(verbose=True, engine=engine_url)
     flags = Flags(verbose=True, engine=engine_url)
-    return ctran, flagged, flags
+    service_periods = Service_Periods(verbose=True, engine=engine_url)
+    return ctran, flagged, flags, service_periods
 
 ###########################################################
 

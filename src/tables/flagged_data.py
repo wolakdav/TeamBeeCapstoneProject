@@ -13,7 +13,8 @@ class Flagged_Data(Table):
         self._creation_sql = "".join(["""
             CREATE TABLE IF NOT EXISTS """, self._schema, ".", self._table_name, """
             (
-                flag_id INTEGER,
+                flag_id INTEGER REFERENCES """, self._schema, """.flags(flag_id),
+                service_key INTEGER REFERENCES """, self._schema, """.service_periods(service_key),
                 row_id INTEGER,
-                PRIMARY KEY (flag_id, row_id)
+                PRIMARY KEY (flag_id, service_key, row_id)
             );"""])

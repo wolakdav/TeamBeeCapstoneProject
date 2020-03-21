@@ -9,16 +9,6 @@ from sqlalchemy.exc import SQLAlchemyError
 """ Extending Table
 Subclasses should not alter self._engine in any capacity.
 For more, see docs/db_ops.md
-
-str self._table_name
-
-str self._index_col
-    For the purposes of loading via Pandas' index_col parameter.
-
-str set self._expected_cols
-    This will contain a set of strings of the columns in the table.
-
-str self._creation_sql
 """
 class Table(abc.ABC):
 
