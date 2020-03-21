@@ -1,6 +1,5 @@
 import os
 from src.tables import CTran_Data
-from src.tables import Duplicated_Data
 from src.tables import Flagged_Data
 from src.tables import Flags
 
@@ -18,18 +17,18 @@ class _Option():
 # Public Functions
 
 def cli(read_env_data=False):
-    ctran, duplicates, flagged, flags = _create_instances(read_env_data)
+    ctran, flagged, flags = _create_instances(read_env_data)
 
     options = [
         _Option("(or ctrl-d) Exit.", lambda: "Exit"),
-        _Option("Sub-menu: DB Operations", lambda: db_cli(ctran, duplicates, flagged, flags))
+        _Option("Sub-menu: DB Operations", lambda: db_cli(ctran, flagged, flags))
     ]
 
     return _menu("Welcome to the CTran Data Marking Pipeline.", options)
 
 ###########################################################
 
-def db_cli(ctran, duplicates, flagged, flags):
+def db_cli(ctran, flagged, flags):
     def ctran_info():
         query = ctran.get_full_table()
         if query is None:
@@ -43,11 +42,9 @@ def db_cli(ctran, duplicates, flagged, flags):
         _Option("Create aperture schema.", ctran.create_schema),
         _Option("Delete aperture schema.", ctran.delete_schema),
         _Option("[dev tool] Create mock ctran_data table [dev tool].", ctran.create_table),
-        _Option("Create duplicates table.", duplicates.create_table),
         _Option("Create flagged_data table.", flagged.create_table),
         _Option("Create flags table.", flags.create_table),
         _Option("[dev tool] Delete mock ctran_data table [dev tool].", ctran.delete_table),
-        _Option("Delete duplicates table.", duplicates.delete_table),
         _Option("Delete flagged_data table.", flagged.delete_table),
         _Option("Delete flags table.", flags.delete_table),
         _Option("Query ctran_data and print ctran_data.info().", ctran_info)
@@ -81,10 +78,9 @@ def _create_instances(read_env_data):
         ctran = CTran_Data(verbose=True)
 
     engine_url = ctran.get_engine().url
-    duplicates = Duplicated_Data(verbose=True, engine=engine_url)
     flagged = Flagged_Data(verbose=True, engine=engine_url)
     flags = Flags(verbose=True, engine=engine_url)
-    return ctran, duplicates, flagged, flags
+    return ctran, flagged, flags
 
 ###########################################################
 

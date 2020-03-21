@@ -11,7 +11,6 @@ These are the subclasses of Table:
 
 - `CTran_Data`  
 - `Flagged_Data`  
-- `Duplicated_Data`  
 - `Flags`  
 
 ## Methods Provided by Table
