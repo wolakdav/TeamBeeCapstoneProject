@@ -76,7 +76,8 @@ class CTran_Data(Table):
 
     #######################################################
 
-    # NOTE: this method will likely fail if ran on a Windows machine.
+    # [dev tool]
+    # This will create a mock CTran Table for development purposes.
     def create_table(self, ctran_sample_path="assets/"):
         if self._engine is None:
             self._print("ERROR: self._engine is None, cannot continue.")
