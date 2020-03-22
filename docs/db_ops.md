@@ -69,11 +69,15 @@ This member will contain the table name as a string.
 This member will contain the index column string that Pandas should use while
 reading in a SQL query as a DataFrame. If there is no column that should be
 used in this manner, initialize this member to `False`. For more on this
-member, see Panda's documentation on `Pandas.DataFrame.read_sql`.
+member, see Panda's documentation on `Pandas.DataFrame.read_sql`.  
+Be aware that the column used as the index will not appear in the expected
+columns.
 
 ##### `self._expected_cols`
 This member will contain a set of strings of the columns in the table for
-validation purposes.
+validation purposes.  
+Be aware that the column used as the index will not appear in the expected
+columns.
 
 ### Protected Methods
 
