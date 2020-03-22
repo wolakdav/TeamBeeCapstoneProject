@@ -17,5 +17,6 @@ class Service_Periods(Table):
                 service_key BIGSERIAL PRIMARY KEY,
                 month SMALLINT NOT NULL CHECK ( (month <= 12) AND (month >= 1) ),
                 year SMALLINT NOT NULL CHECK (year > 1700),
-                ternary SMALLINT NOT NULL CHECK ( (ternary <= 3) AND (ternary >= 1) )
+                ternary SMALLINT NOT NULL CHECK ( (ternary <= 3) AND (ternary >= 1) ),
+                UNIQUE (month, year, ternary)
             );"""])
