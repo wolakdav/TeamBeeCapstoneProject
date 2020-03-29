@@ -128,8 +128,6 @@ class CTran_Data(Table):
                     schema = self._schema,
                 )
 
-            self._print("Done.")
-
         except SQLAlchemyError as error:
             print("SQLAclchemy:", error)
             return False
