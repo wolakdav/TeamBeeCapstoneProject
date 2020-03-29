@@ -118,7 +118,6 @@ class CTran_Data(Table):
                     return False
 
                 self._print("Writing sample data to table. This will take a few minutes.")
-                self._print("Done.")
 
             sample_data.to_sql(
                     self._table_name,
@@ -128,6 +127,8 @@ class CTran_Data(Table):
                     chunksize = self._chunksize,
                     schema = self._schema,
                 )
+
+            self._print("Done.")
 
         except SQLAlchemyError as error:
             print("SQLAclchemy:", error)
