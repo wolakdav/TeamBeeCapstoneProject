@@ -8,11 +8,11 @@ class CTran_Data(Table):
     ###########################################################################
     # Public Methods
 
-    def __init__(self, user=None, passwd=None, hostname="localhost", db_name="aperature", verbose=False, engine=None):
+    def __init__(self, user=None, passwd=None, hostname="localhost", db_name="aperture", verbose=False, engine=None):
         super().__init__(user, passwd, hostname, db_name, verbose, engine)
-        self._schema = "aperature"
+        self._schema = "aperture"
         self._table_name = "ctran_data"
-        self._index_col = "data_row"
+        self._index_col = "row_id"
         self._expected_cols = set([
             "service_date",
             "vehicle_number",
@@ -45,7 +45,7 @@ class CTran_Data(Table):
         self._creation_sql = "".join(["""
             CREATE TABLE IF NOT EXISTS """, self._schema, ".", self._table_name, """
             (
-                data_row BIGSERIAL PRIMARY KEY,
+                row_id BIGSERIAL PRIMARY KEY,
                 service_date DATE,
                 vehicle_number INTEGER,
                 leave_time INTEGER,
@@ -76,7 +76,8 @@ class CTran_Data(Table):
 
     #######################################################
 
-    # NOTE: this method will likely fail if ran on a Windows machine.
+    # [dev tool]
+    # This will create a mock CTran Table for development purposes.
     def create_table(self, ctran_sample_path="assets/"):
         if self._engine is None:
             self._print("ERROR: self._engine is None, cannot continue.")
@@ -89,14 +90,12 @@ class CTran_Data(Table):
         try:
             sample_data = pandas.read_csv(csv_location, parse_dates=["service_date"])
 
-        except FileNotFoundError as error:
+        except (FileNotFoundError, ValueError) as error:
             print("Pandas:", error)
             print("Cannot continue table creation, cancelling.")
             return False
 
-        # You may be tempted to attempt to optimize this by doing list
-        # comparisons, but that can be weirdly unpredictable.
-        if set(list(sample_data)) != self._expected_cols:
+        if not self._check_cols(sample_data):
             self._print("ERROR: the columns of read data does not match the specified columns.")
             return False
 
@@ -119,7 +118,6 @@ class CTran_Data(Table):
                     return False
 
                 self._print("Writing sample data to table. This will take a few minutes.")
-                self._print("Done.")
 
             sample_data.to_sql(
                     self._table_name,
