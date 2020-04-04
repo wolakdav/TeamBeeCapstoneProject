@@ -1,5 +1,6 @@
 import io
 import pytest
+import pandas
 from sqlalchemy import create_engine
 from src.tables import Service_Periods
 
@@ -106,6 +107,14 @@ def test_prompt_hidden(capsys, monkeypatch, service_periods_fixture):
     result = service_periods_fixture._prompt(prompt, True)
     assert result == expected
 
+def test_check_cols_happy(service_periods_fixture):
+    test_list = [["a","b","c"], ["AA","BB","CC"]]
+    sample_df = pandas.DataFrame(test_list, columns=list(service_periods_fixture._expected_cols))
+    assert service_periods_fixture._check_cols(sample_df) == True
+
+def test_check_cols_sad(service_periods_fixture):
+    assert service_periods_fixture._check_cols(pandas.DataFrame()) == False
+
 # TODO: mock out DB and test:
 #   get_full_table
 #   create_schema
@@ -116,3 +125,9 @@ def test_prompt_hidden(capsys, monkeypatch, service_periods_fixture):
 
 # TODO: When done testing this class, copy and adjust these tests for the other
 # classes as well. CTran_Data will need to have custom tests for create_table.
+#
+# Alternatively, possibly use these tests of inherited Table members/methods to
+# be used for all inherited and unchanged members/methods between subclasses.
+# This might be taken even further by just having a subclass of Table that
+# exists to serve as a testing class for Table, and then just test the
+# specifics of each subclass.
