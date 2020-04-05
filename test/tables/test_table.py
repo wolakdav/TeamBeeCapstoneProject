@@ -42,6 +42,12 @@ def dummy_engine():
     engine_info = "".join(["postgresql://", user, ":", passwd, "@", hostname, "/", db_name])
     return create_engine(engine_info), user, passwd, hostname, db_name
 
+@pytest.fixture
+def sample_df(instance_fixture):
+    test_list = [["a", "b", "c", "d", "e"], ["AA", "BB", "CC", "DD", "EE"]]
+    sample_df = pandas.DataFrame(test_list, columns=list(instance_fixture._expected_cols))
+    return sample_df
+
 
 def test_constructor_build_engine(dummy_engine):
     expected, user, passwd, hostname, db_name = dummy_engine
@@ -133,13 +139,25 @@ def test_prompt_hidden(capsys, monkeypatch, instance_fixture):
     result = instance_fixture._prompt(prompt, True)
     assert result == expected
 
-def test_check_cols_happy(instance_fixture):
-    test_list = [["a", "b", "c", "d", "e"], ["AA", "BB", "CC", "DD", "EE"]]
-    sample_df = pandas.DataFrame(test_list, columns=list(instance_fixture._expected_cols))
+def test_check_cols_happy(sample_df, instance_fixture):
     assert instance_fixture._check_cols(sample_df) == True
 
 def test_check_cols_sad(instance_fixture):
     assert instance_fixture._check_cols(pandas.DataFrame()) == False
+
+def test_get_full_table_happy(monkeypatch, sample_df, instance_fixture):
+    def custom_read_sql(sql, engine, index_col):
+        expected_sql = "".join(["SELECT * FROM ", instance_fixture._schema, ".", instance_fixture._table_name, ";"])
+        if sql != expected_sql:
+            return False
+        if engine.url != instance_fixture._engine.url:
+            return False
+        if index_col != instance_fixture._index_col:
+            return False
+        return sample_df
+
+    monkeypatch.setattr("pandas.read_sql", custom_read_sql)
+    assert isinstance(instance_fixture.get_full_table(), pandas.DataFrame)
 
 # TODO: mock out DB and test:
 #
