@@ -153,19 +153,19 @@ def test_check_cols_sad(instance_fixture):
 #   create_schema
 #       happy test: returns True
 #       unset engine: returns False
-#       SQLalchemy error: returns None
+#       SQLalchemy error: returns False
 #
 #   delete_schema
 #       happy test: returns True
 #       unset engine: returns False
-#       SQLalchemy error: returns None
+#       SQLalchemy error: returns False
 #
 #   create_table
 #       happy test: returns True
 #       unset engine: returns False
-#       SQLalchemy error: returns None
+#       SQLalchemy error: returns False
 #
 #   delete_table
 #       happy test: returns True
 #       unset engine: returns False
-#       SQLalchemy error: returns None
+#       SQLalchemy error: returns False
