@@ -40,7 +40,6 @@ class Table(abc.ABC):
 
     #######################################################
     
-    # NOTE: if there is no ctran_data table, this will not work, obviously.
     def get_full_table(self):
         if self._engine is None:
             self._print("ERROR: self._engine is None, cannot continue.")
