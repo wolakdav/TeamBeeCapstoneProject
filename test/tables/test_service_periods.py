@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 from src.tables import Service_Periods
 
 @pytest.fixture
-def service_periods_fixture():
+def instance_fixture():
     return Service_Periods("sw23", "fake")
 
 @pytest.fixture
@@ -29,23 +29,23 @@ def test_constructor_given_engine(dummy_engine):
     instance = Service_Periods(engine=engine_url)
     assert instance._engine.url == engine.url
 
-def test_index_col(service_periods_fixture):
-    assert service_periods_fixture._index_col == "service_key"
+def test_index_col(instance_fixture):
+    assert instance_fixture._index_col == "service_key"
 
-def test_table_name(service_periods_fixture):
-    assert service_periods_fixture._table_name == "service_periods"
+def test_table_name(instance_fixture):
+    assert instance_fixture._table_name == "service_periods"
 
-def test_schema(service_periods_fixture):
-    assert service_periods_fixture._schema == "hive"
+def test_schema(instance_fixture):
+    assert instance_fixture._schema == "hive"
 
-def test_expected_cols(service_periods_fixture):
+def test_expected_cols(instance_fixture):
     expected_cols = set(["month", "year", "ternary"])
-    assert service_periods_fixture._expected_cols == expected_cols
+    assert instance_fixture._expected_cols == expected_cols
 
-def test_creation_sql(service_periods_fixture):
+def test_creation_sql(instance_fixture):
     # This tabbing is not accidental.
     expected = "".join(["""
-            CREATE TABLE IF NOT EXISTS """, service_periods_fixture._schema, ".", service_periods_fixture._table_name, """
+            CREATE TABLE IF NOT EXISTS """, instance_fixture._schema, ".", instance_fixture._table_name, """
             (
                 service_key BIGSERIAL PRIMARY KEY,
                 month SMALLINT NOT NULL CHECK ( (month <= 12) AND (month >= 1) ),
@@ -53,4 +53,4 @@ def test_creation_sql(service_periods_fixture):
                 ternary SMALLINT NOT NULL CHECK ( (ternary <= 3) AND (ternary >= 1) ),
                 UNIQUE (month, year, ternary)
             );"""])
-    assert expected == service_periods_fixture._creation_sql
+    assert expected == instance_fixture._creation_sql

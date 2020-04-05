@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 from src.tables import Flagged_Data
 
 @pytest.fixture
-def service_periods_fixture():
+def instance_fixture():
     return Flagged_Data("sw23", "fake")
 
 @pytest.fixture
@@ -29,27 +29,27 @@ def test_constructor_given_engine(dummy_engine):
     instance = Flagged_Data(engine=engine_url)
     assert instance._engine.url == engine.url
 
-def test_index_col(service_periods_fixture):
-    assert service_periods_fixture._index_col is None
+def test_index_col(instance_fixture):
+    assert instance_fixture._index_col is None
 
-def test_table_name(service_periods_fixture):
-    assert service_periods_fixture._table_name == "flagged_data"
+def test_table_name(instance_fixture):
+    assert instance_fixture._table_name == "flagged_data"
 
-def test_schema(service_periods_fixture):
-    assert service_periods_fixture._schema == "hive"
+def test_schema(instance_fixture):
+    assert instance_fixture._schema == "hive"
 
-def test_expected_cols(service_periods_fixture):
+def test_expected_cols(instance_fixture):
     expected_cols = set(["flag_id", "row_id"])
-    assert service_periods_fixture._expected_cols == expected_cols
+    assert instance_fixture._expected_cols == expected_cols
 
-def test_creation_sql(service_periods_fixture):
+def test_creation_sql(instance_fixture):
     # This tabbing is not accidental.
     expected = "".join(["""
-            CREATE TABLE IF NOT EXISTS """, service_periods_fixture._schema, ".", service_periods_fixture._table_name, """
+            CREATE TABLE IF NOT EXISTS """, instance_fixture._schema, ".", instance_fixture._table_name, """
             (
-                flag_id INTEGER REFERENCES """, service_periods_fixture._schema, """.flags(flag_id),
-                service_key INTEGER REFERENCES """, service_periods_fixture._schema, """.service_periods(service_key),
+                flag_id INTEGER REFERENCES """, instance_fixture._schema, """.flags(flag_id),
+                service_key INTEGER REFERENCES """, instance_fixture._schema, """.service_periods(service_key),
                 row_id INTEGER,
                 PRIMARY KEY (flag_id, service_key, row_id)
             );"""])
-    assert expected == service_periods_fixture._creation_sql
+    assert expected == instance_fixture._creation_sql
