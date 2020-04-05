@@ -142,9 +142,30 @@ def test_check_cols_sad(instance_fixture):
     assert instance_fixture._check_cols(pandas.DataFrame()) == False
 
 # TODO: mock out DB and test:
-#       (also be sure to make the various exceptions be thrown)
+#
 #   get_full_table
+#       happy test: returns a df
+#       unset engine: returns None
+#       invalid cols of result: returns None
+#       pandas error: returns None
+#       SQLalchemy error: returns None
+#       
 #   create_schema
+#       happy test: returns True
+#       unset engine: returns False
+#       SQLalchemy error: returns None
+#
 #   delete_schema
+#       happy test: returns True
+#       unset engine: returns False
+#       SQLalchemy error: returns None
+#
 #   create_table
+#       happy test: returns True
+#       unset engine: returns False
+#       SQLalchemy error: returns None
+#
 #   delete_table
+#       happy test: returns True
+#       unset engine: returns False
+#       SQLalchemy error: returns None
