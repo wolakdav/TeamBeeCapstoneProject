@@ -141,7 +141,8 @@ def test_check_cols_happy(instance_fixture):
 def test_check_cols_sad(instance_fixture):
     assert instance_fixture._check_cols(pandas.DataFrame()) == False
 
-# TODO: mock out DB and test: (also be sure to make the various exceptions be thrown)
+# TODO: mock out DB and test:
+#       (also be sure to make the various exceptions be thrown)
 #   get_full_table
 #   create_schema
 #   delete_schema

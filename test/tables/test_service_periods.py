@@ -35,9 +35,6 @@ def test_index_col(instance_fixture):
 def test_table_name(instance_fixture):
     assert instance_fixture._table_name == "service_periods"
 
-def test_schema(instance_fixture):
-    assert instance_fixture._schema == "hive"
-
 def test_expected_cols(instance_fixture):
     expected_cols = set(["month", "year", "ternary"])
     assert instance_fixture._expected_cols == expected_cols
