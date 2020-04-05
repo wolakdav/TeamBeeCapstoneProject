@@ -1,12 +1,3 @@
-# This test file asserts that the base methods and members of Table are
-# correct. Therefore, any subclasses that do not change these does not need to
-# be tested again.
-# When the abstract members are implemented/tested by subclasses, they do not
-# need to then mock out the tests for get_full_table, create/delete_schema, and
-# create/delete_table as the functionality of those methods is tested here with
-# the member data. In summary, subclasses should test that their implementation
-# of abstract members is correct, then they can leverage the tests here to not
-# need to test those methods.
 import io
 import pytest
 import pandas
