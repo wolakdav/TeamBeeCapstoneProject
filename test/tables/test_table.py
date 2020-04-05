@@ -48,6 +48,20 @@ def sample_df(instance_fixture):
     sample_df = pandas.DataFrame(test_list, columns=list(instance_fixture._expected_cols))
     return sample_df
 
+@pytest.fixture
+def custom_read_sql(sample_df, instance_fixture):
+    def read_sql(sql, engine, index_col):
+        expected_sql = "".join(["SELECT * FROM ", instance_fixture._schema, ".", instance_fixture._table_name, ";"])
+        if sql != expected_sql:
+            return False
+        if engine.url != instance_fixture._engine.url:
+            return False
+        if index_col != instance_fixture._index_col:
+            return False
+        return sample_df
+
+    return read_sql
+
 
 def test_constructor_build_engine(dummy_engine):
     expected, user, passwd, hostname, db_name = dummy_engine
@@ -145,24 +159,16 @@ def test_check_cols_happy(sample_df, instance_fixture):
 def test_check_cols_sad(instance_fixture):
     assert instance_fixture._check_cols(pandas.DataFrame()) == False
 
-def test_get_full_table_happy(monkeypatch, sample_df, instance_fixture):
-    def custom_read_sql(sql, engine, index_col):
-        expected_sql = "".join(["SELECT * FROM ", instance_fixture._schema, ".", instance_fixture._table_name, ";"])
-        if sql != expected_sql:
-            return False
-        if engine.url != instance_fixture._engine.url:
-            return False
-        if index_col != instance_fixture._index_col:
-            return False
-        return sample_df
-
+def test_get_full_table_happy(monkeypatch, custom_read_sql, instance_fixture):
     monkeypatch.setattr("pandas.read_sql", custom_read_sql)
     assert isinstance(instance_fixture.get_full_table(), pandas.DataFrame)
+
+def test_get_full_table_bad_engine(monkeypatch, instance_fixture):
+    pass
 
 # TODO: mock out DB and test:
 #
 #   get_full_table
-#       happy test: returns a df
 #       unset engine: returns None
 #       invalid cols of result: returns None
 #       pandas error: returns None
