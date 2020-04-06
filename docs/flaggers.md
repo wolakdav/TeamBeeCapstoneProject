@@ -1,16 +1,19 @@
+#Flags Description
+
+##Setup
 To create a new flagger:
 Copy the boilerplate class, change the class name, the name field, the flag
 method, and add the class to the flaggers list. The flag class must return a 
 list of flag, or an empty list.
 
 
-Flags
+##Flags
 -----
 
 There are different types of flags used to represent different types of things 
 present in a row data (object):
 
-
+###Null Flags
 *_NULL flags mean that a particular field is null (e.g.: SERVICE_DATE_NULL 
 means service_date field is null):
 
@@ -41,3 +44,7 @@ means service_date field is null):
   DATA_SOURCE_NULL                    ['data_source' field is Null]
   SCHEDULE_STATUS_NULL                ['schedule_status' field is Null]
   TRIP_ID_NULL                        ['trip_id' field is Null]
+
+###Unobserved stop Flag
+Flag is turned on when bus stops at a certain distance away from the stop, meaning that bus stopped where it should not have stopped
+  UNOBSERVED_STOP                     ['location_distance' is above some specific number (threshold)]
