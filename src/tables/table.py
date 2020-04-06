@@ -4,6 +4,7 @@ import getpass
 import pandas
 from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.engine.base import Engine
 
 
 """ Extending Table
@@ -67,8 +68,8 @@ class Table(abc.ABC):
     #######################################################
 
     def create_schema(self):
-        if self._engine is None:
-            self._print("ERROR: self._engine is None, cannot continue.")
+        if not isinstance(self._engine, Engine):
+            self._print("ERROR: self._engine is not an Engine, cannot continue.")
             return False
 
         self._print("Connecting to DB.")
@@ -88,8 +89,8 @@ class Table(abc.ABC):
     #######################################################
 
     def delete_schema(self):
-        if self._engine is None:
-            self._print("ERROR: self._engine is None, cannot continue.")
+        if not isinstance(self._engine, Engine):
+            self._print("ERROR: self._engine is not an Engine, cannot continue.")
             return False
 
         self._print("Connecting to DB.")
@@ -109,8 +110,8 @@ class Table(abc.ABC):
     #######################################################
     
     def create_table(self):
-        if self._engine is None:
-            self._print("ERROR: self._engine is None, cannot continue.")
+        if not isinstance(self._engine, Engine):
+            self._print("ERROR: self._engine is not an Engine, cannot continue.")
             return False
 
         if not self.create_schema():
@@ -133,8 +134,8 @@ class Table(abc.ABC):
     #######################################################
 
     def delete_table(self):
-        if self._engine is None:
-            self._print("ERROR: self._engine is None, cannot continue.")
+        if not isinstance(self._engine, Engine):
+            self._print("ERROR: self._engine is not an Engine, cannot continue.")
             return False
 
         self._print("Connecting to DB.")

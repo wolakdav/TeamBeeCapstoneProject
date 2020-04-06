@@ -2,6 +2,7 @@ import sys
 import pandas
 from .table import Table
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.engine.base import Engine
 
 class CTran_Data(Table):
 
@@ -79,8 +80,8 @@ class CTran_Data(Table):
     # [dev tool]
     # This will create a mock CTran Table for development purposes.
     def create_table(self, ctran_sample_path="assets/"):
-        if self._engine is None:
-            self._print("ERROR: self._engine is None, cannot continue.")
+        if not isinstance(self._engine, Engine):
+            self._print("ERROR: self._engine is not an Engine, cannot continue.")
             return False
 
         csv_location = "".join([ctran_sample_path, "/ctran_trips_sample.csv"])

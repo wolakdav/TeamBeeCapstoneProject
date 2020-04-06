@@ -2,6 +2,7 @@ import io
 import pytest
 import pandas
 from sqlalchemy import create_engine
+from sqlalchemy.engine.base import Engine
 from src.tables import Table
 
 # Test_Dummy is used to allow for easy and precise tests of Table.
@@ -53,11 +54,11 @@ def custom_read_sql(sample_df, instance_fixture):
     def read_sql(sql, engine, index_col):
         expected_sql = "".join(["SELECT * FROM ", instance_fixture._schema, ".", instance_fixture._table_name, ";"])
         if sql != expected_sql:
-            return False
-        if engine.url != instance_fixture._engine.url:
-            return False
+            return pandas.DataFrame()
+        if not isinstance(engine, Engine) or engine.url != instance_fixture._engine.url:
+            return pandas.DataFrame()
         if index_col != instance_fixture._index_col:
-            return False
+            return pandas.DataFrame()
         return sample_df
 
     return read_sql
@@ -163,8 +164,10 @@ def test_get_full_table_happy(monkeypatch, custom_read_sql, instance_fixture):
     monkeypatch.setattr("pandas.read_sql", custom_read_sql)
     assert isinstance(instance_fixture.get_full_table(), pandas.DataFrame)
 
-def test_get_full_table_bad_engine(monkeypatch, instance_fixture):
-    pass
+def test_get_full_table_bad_engine(monkeypatch, custom_read_sql, instance_fixture):
+    monkeypatch.setattr("pandas.read_sql", custom_read_sql)
+    instance_fixture._engine = False
+    assert instance_fixture.get_full_table() is None
 
 # TODO: mock out DB and test:
 #
