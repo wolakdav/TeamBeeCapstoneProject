@@ -109,6 +109,6 @@ def test_creation_sql(instance_fixture):
 #       unset engine: returns False
 #       invalid cols of result: returns False
 #       pandas error: returns False
-#           FileNotFoundError and general failure w/ ValueError
+#           FileNotFoundError
 #       check_cols failure: invalid cols of sample data
 #       SQLalchemy error: returns False

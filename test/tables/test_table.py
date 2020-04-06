@@ -164,18 +164,25 @@ def test_get_full_table_happy(monkeypatch, custom_read_sql, instance_fixture):
     monkeypatch.setattr("pandas.read_sql", custom_read_sql)
     assert isinstance(instance_fixture.get_full_table(), pandas.DataFrame)
 
+# TODO: for these, try catching the stdout and see which error it cites as wrong.
+
 def test_get_full_table_bad_engine(monkeypatch, custom_read_sql, instance_fixture):
     monkeypatch.setattr("pandas.read_sql", custom_read_sql)
     instance_fixture._engine = False
     assert instance_fixture.get_full_table() is None
 
+def test_get_full_table_mismatch_cols(monkeypatch, custom_read_sql, instance_fixture):
+    monkeypatch.setattr("pandas.read_sql", custom_read_sql)
+    instance_fixture._expected_cols = set([])
+    assert instance_fixture.get_full_table() is None
+
+def test_get_full_table_sqlalchemy_error(instance_fixture):
+    # Since this table is fake, SQLalchemy will not be able to find it, which
+    # will cause this to fail.
+    assert instance_fixture.get_full_table() is None
+
+
 # TODO: mock out DB and test:
-#
-#   get_full_table
-#       unset engine: returns None
-#       invalid cols of result: returns None
-#       pandas error: returns None
-#       SQLalchemy error: returns None
 #       
 #   create_schema
 #       happy test: returns True
@@ -187,7 +194,7 @@ def test_get_full_table_bad_engine(monkeypatch, custom_read_sql, instance_fixtur
 #       unset engine: returns False
 #       SQLalchemy error: returns False
 #
-#   create_table
+#   create_table - make a fixture that mocks the connection/create_schema.
 #       happy test: returns True
 #       unset engine: returns False
 #       SQLalchemy error: returns False
