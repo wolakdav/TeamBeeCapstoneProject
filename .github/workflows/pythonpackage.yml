@@ -25,11 +25,13 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
+        ls -a
         python -m pip install --upgrade pip
         python -m pip install pipenv
-        pipenv shell
         pipenv install
+        # Workaround for pipenv shell issue: https://github.com/pypa/pipenv/issues/290#issuecomment-296969754
+        #export VENV_HOME_DIR=$(pipenv --venv)
+        #source $VENV_HOME_DIR/bin/activate
     - name: Test with pytest
       run: |
-        pip install pytest
-        pytest
+        pipenv run pytest
