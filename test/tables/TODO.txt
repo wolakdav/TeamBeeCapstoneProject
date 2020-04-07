@@ -1,0 +1,10 @@
+
+redo the built tests the code they test has changed
+
+testing
+    be sure to make every exception/return value be caused
+
+    test everything fully
+
+
+when done, take one last pass at the different error messages to make sure they're good and consistent
