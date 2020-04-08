@@ -37,6 +37,9 @@ class Flags(Enum):
   #Unobserved stop flag
   UNOBSERVED_STOP = auto()
 
+  #Unopened door flag
+  UNOPENED_DOOR = auto()
+
 class Flagger(abc.ABC):
   # Name must be overwritten
   @property

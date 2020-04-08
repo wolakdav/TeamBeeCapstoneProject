@@ -6,13 +6,19 @@ class UnobservedStop(Flagger):
 	name = 'Unobserved Stop'
 
 	def flag(self, data):
-		"""Checks if stop happened at a certain distance away from the actual stop to mark it as an unobserved stop
+		"""
+		Checks if stop happened at a certain distance away from the actual stop to mark it as an unobserved stop.
+		To check that, we compare -
+		location distance:  The distance between the vehicle position recorded by
+							BDS and the location of the scheduled stop. The unit
+							of the measure is feet and the number is stored as a
+							floating-point value.
 
 		Args:
 			data (Object): data row from full dataset fetched from the db
 
 		Returns: 
-			list: either empty or containing UNOBSERVED_FLAG 
+			list: either empty or containing UNOBSERVED_STOP Flag
 
 		"""
 
@@ -21,8 +27,10 @@ class UnobservedStop(Flagger):
 		maxDistance = 50
 
 		flag = []
+
 		if ('location_distance' in data) and (data.location_distance > maxDistance):
 			flag.append(Flags.UNOBSERVED_FLAG);
+
 		return flag
 
 flaggers.append(UnobservedStop())

@@ -48,3 +48,7 @@ means service_date field is null):
 ###Unobserved stop Flag
 Flag is turned on when bus stops at a certain distance away from the stop, meaning that bus stopped where it should not have stopped
   UNOBSERVED_STOP                     ['location_distance' is above some specific number (threshold)]
+
+###Unopened door Flag
+Flag is turned on when door is not opened during stop (perhaps no passengers getting on/off, or test drive of the bus, or any other reason)
+  UNOPENED_DORR                       ['door' is 0 (door field specifies number of time door has been opened)]
