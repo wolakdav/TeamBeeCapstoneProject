@@ -1,3 +1,5 @@
 
 grep -n "TODO" *
 
+Also manually throw ValueError to make sure they keep that exception caught
+
