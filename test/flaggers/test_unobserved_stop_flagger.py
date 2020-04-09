@@ -28,7 +28,7 @@ def test_unobserved_stop_flagger_on_good_data(unobserved_stop_flagger, good_data
 	assert len(flags) == 0
 
 #Should return flags, since data is bad [returns list with 1 flag]
-def test_unobserved_stop_flaggers_on_bad_data(unobserved_stop_flagger, bad_data):
+def test_unobserved_stop_flagger_on_bad_data(unobserved_stop_flagger, bad_data):
 	flags = unobserved_stop_flagger.flag(bad_data)
 	assert len(flags) == 1
 
