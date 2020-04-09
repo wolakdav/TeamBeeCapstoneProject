@@ -7,6 +7,7 @@ class Flags(Enum):
   ###################################################
 
   #Null flags
+  ROW_ID_NULL = auto()
   SERVICE_DATE_NULL = auto()
   VEHICLE_NUMBER_NULL = auto()
   LEAVE_TIME_NULL = auto()
