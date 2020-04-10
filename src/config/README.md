@@ -1,14 +1,30 @@
 ## Usage (in Python)
 
-Config file is set using an absolute path CONFIG_FILE in Config.py
 
-
-
+### Load config
 ```
 from config import config
 from config import BoundsResult
 
-config.load()
+config.load('path_to_config.json')
+```
+
+### Set value
+```
+try:
+    user = os.environ["PIPELINE_USER"]
+    config.set_value('user', user)
+except KeyError as err:
+    print("Could not read environment data.")
+```
+
+### Get value
+```
+email = config.get_value('email', email)
+```
+
+### Column bounds checking
+```
 result = config.check_bounds('id', 22)
 
 if result == BoundsResult.VALID:
@@ -20,6 +36,8 @@ elif result == BoundsResult.MAX_ERROR:
 ```
 
 ## Usage (Command Line)
+
+(currently unclear what this is for)
 
 ```
 $ python3 Config.py load

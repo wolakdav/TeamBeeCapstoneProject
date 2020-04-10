@@ -2,18 +2,16 @@ import sys
 import json
 from enum import Enum
 
-CONFIG_FILE = '/home/ekw/GitHub/TeamBeeCapstoneProject/src/config/config.json'
-
-
 class BoundsResult(Enum):
     VALID = 1     #value is within range
     MAX_ERROR = 2 #value is greater than MAX
     MIN_ERROR = 3 #value is less than MIN
 
 class Config:    
-    def load(self, filename='log.txt', debug=False):
-        with open(CONFIG_FILE) as f:
+    def load(self, filename=CONFIG_FILE, debug=False):
+        with open(filename) as f:
             self._data = json.load(f)
+            print(self._data)
 
     def set_value(self, name, val):
         self._data[name] = val
