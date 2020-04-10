@@ -15,10 +15,13 @@ class Config:
         with open(CONFIG_FILE) as f:
             self._data = json.load(f)
 
+    def set_value(self, name, val):
+        self._data[name] = val
+
     def get_value(self, val):
         if val in self._data:
             return self._data[val]
-            
+
     def check_bounds(self, column_name, val):
         if column_name in self._data['columns']:
             col = self._data['columns'][column_name]
