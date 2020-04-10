@@ -20,11 +20,11 @@ class Config:
             col = self._data['columns'][column_name]
 
             if col['max'] != 'NA':
-                if val > int(col['max']):
+                if val > col['max']:
                     return BoundsResult.MAX_ERROR
 
             if col['min'] != 'NA':
-                if val < int(col['min']):
+                if val < col['min']:
                     return BoundsResult.MIN_ERROR
 
             return BoundsResult.VALID
