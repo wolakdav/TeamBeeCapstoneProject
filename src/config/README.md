@@ -5,7 +5,6 @@ Config file is set using an absolute path CONFIG_FILE in Config.py
 
 
 ```
-
 from config import config
 from config import BoundsResult
 
@@ -18,4 +17,12 @@ elif result == BoundsResult.MIN_ERROR:
     print("it's too low!")
 elif result == BoundsResult.MAX_ERROR:
     print("it's too high!")
+```
+
+## Usage (Command Line)
+
+```
+$ python3 Config.py load
+
+Loaded config data.
 ```

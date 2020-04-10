@@ -1,4 +1,4 @@
-
+import sys
 import json
 from enum import Enum
 
@@ -14,7 +14,6 @@ class Config:
     def load(self, filename='log.txt', debug=False):
         with open(CONFIG_FILE) as f:
             self._data = json.load(f)
-            print(self._data)
     def check_bounds(self, column_name, val):
         if column_name in self._data['columns']:
             col = self._data['columns'][column_name]
@@ -28,3 +27,10 @@ class Config:
                     return BoundsResult.MIN_ERROR
 
             return BoundsResult.VALID
+
+if __name__ == "__main__":
+     if len(sys.argv) > 1:
+         if (sys.argv[1] == 'load'):
+             config = Config()
+             config.load()
+             print('Loaded config data.')
