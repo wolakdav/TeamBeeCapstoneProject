@@ -20,7 +20,7 @@ except KeyError as err:
 
 ### Get value
 ```
-email = config.get_value('email', email)
+email = config.get_value('email')
 ```
 
 ### Column bounds checking
