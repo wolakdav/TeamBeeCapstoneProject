@@ -135,8 +135,20 @@ def test_create_table_bad_filepath(monkeypatch, instance_fixture):
     monkeypatch.setattr("pandas.read_csv", custom_read_csv)
     assert instance_fixture.create_table() == False
 
+def test_create_table_invalid_cols(monkeypatch, instance_fixture):
+    test_list = [["a", "b", "c", "d", "e"], ["AA", "BB", "CC", "DD", "EE"]]
+    bad_df = pandas.DataFrame(test_list)
+    monkeypatch.setattr("pandas.read_csv", lambda _, parse_dates: bad_df)
+    assert instance_fixture.create_table() == False
+
+def test_create_table_helper_fails(monkeypatch, instance_fixture):
+    monkeypatch.setattr("pandas.read_csv", lambda _, parse_dates: pandas.DataFrame)
+    instance_fixture._check_cols = lambda _: True
+    instance_fixture._create_table_helper = lambda _: False
+    assert instance_fixture.create_table() == False
+
 # TODO: test the overridden create_table.
 #       verify sql
-#       invalid cols of result: returns False
-#       check_cols failure: invalid cols of sample data
+#       if super().create_table failes, then so should create table helper
 #       SQLalchemy error: returns False
+#       when done, have as happy a test as possible - actually read the file
