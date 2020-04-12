@@ -7,7 +7,8 @@ from src.tables import Table
 
 # Yes, it is not great to use global variables, but I am at a loss for how to
 # test some SQL variables that are local to methods this without it.
-g_valid_sql = None
+g_is_valid = None
+g_expected = None
 
 # Test_Dummy is used to allow for easy and precise tests of Table.
 class Table_Dummy(Table):
@@ -67,19 +68,19 @@ def custom_read_sql(sample_df, instance_fixture):
 
     return read_sql
 
+# This fixture uses g_is_valid and g_expected. It will not reset those values
+# before or after execution.
 @pytest.fixture
-def custom_connect_factory():
+def custom_connect():
     class custom_connect():
-        def __init__(self, expected_sql):
-            self.expected_sql = expected_sql
+        def execute(self, sql):
+            global g_is_valid
+            global g_expected
 
-        def connect(self):
-            def execute(self, sql):
-                if sql != self.expected_sql:
-                    return False
-                else:
-                    return True
-            return execute
+            if sql != g_expected:
+                g_is_valid = False
+            else:
+                g_is_valid = True
 
     return custom_connect
 
@@ -201,20 +202,13 @@ def test_get_full_table_sqlalchemy_error(instance_fixture):
     # will cause this to fail.
     assert instance_fixture.get_full_table() is None
 
-def test_create_schema_verify_sql(instance_fixture):
-    class custom_connect():
-        def execute(self, sql):
-            global g_valid_sql
-            expected_sql = "".join(["CREATE SCHEMA IF NOT EXISTS ", instance_fixture._schema, ";"])
-            if sql != expected_sql:
-                g_valid_sql = False
-            else:
-                g_valid_sql = True
-
-    global g_valid_sql
+def test_create_schema_verify_sql(custom_connect, instance_fixture):
+    global g_is_valid
+    global g_expected
+    g_expected = "".join(["CREATE SCHEMA IF NOT EXISTS ", instance_fixture._schema, ";"])
     instance_fixture._engine.connect = custom_connect
     assert instance_fixture.create_schema() == True
-    assert g_valid_sql == True
+    assert g_is_valid == True
 
 def test_create_schema_sqlalchemy_error(instance_fixture):
     # Since this table is fake, SQLalchemy will not be able to find it, which
