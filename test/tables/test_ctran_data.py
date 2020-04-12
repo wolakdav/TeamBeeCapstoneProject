@@ -2,7 +2,11 @@ import io
 import pytest
 import pandas
 from sqlalchemy import create_engine
+from sqlalchemy.engine.base import Engine
 from src.tables import CTran_Data
+
+g_is_valid = None
+g_expected = None
 
 @pytest.fixture
 def instance_fixture():
@@ -16,6 +20,22 @@ def dummy_engine():
     db_name = "idk_something"
     engine_info = "".join(["postgresql://", user, ":", passwd, "@", hostname, "/", db_name])
     return create_engine(engine_info), user, passwd, hostname, db_name
+
+# This fixture uses g_is_valid and g_expected. It will not reset those values
+# before or after execution.
+@pytest.fixture
+def custom_connect():
+    class custom_connect():
+        def execute(self, sql):
+            global g_is_valid
+            global g_expected
+
+            if sql != g_expected:
+                g_is_valid = False
+            else:
+                g_is_valid = True
+
+    return custom_connect
 
 
 def test_constructor_build_engine(dummy_engine):
@@ -104,11 +124,19 @@ def test_creation_sql(instance_fixture):
             );"""])
     assert expected == instance_fixture._creation_sql
 
+def test_create_table_bad_engine(instance_fixture):
+    instance_fixture._engine = None
+    assert instance_fixture.create_table() == False
+
+def test_create_table_bad_filepath(monkeypatch, instance_fixture):
+    def custom_read_csv(csv_location, parse_dates):
+        raise FileNotFoundError
+
+    monkeypatch.setattr("pandas.read_csv", custom_read_csv)
+    assert instance_fixture.create_table() == False
+
 # TODO: test the overridden create_table.
 #       verify sql
-#       unset engine: returns False
 #       invalid cols of result: returns False
-#       pandas error: returns False
-#           FileNotFoundError
 #       check_cols failure: invalid cols of sample data
 #       SQLalchemy error: returns False
