@@ -255,9 +255,19 @@ def test_create_table_bad_engine(instance_fixture):
     instance_fixture._engine = None
     assert instance_fixture.create_table() == False
 
-# TODO: mock out DB and test:
-#       
-#   delete_table
-#       verify sql
-#       unset engine: returns False
-#       SQLalchemy error: returns False
+def test_delete_table_verify_sql(custom_connect, instance_fixture):
+    global g_is_valid
+    global g_expected
+    g_expected = "".join(["DROP TABLE IF EXISTS " + instance_fixture._schema + "." + instance_fixture._table_name + ";"])
+    instance_fixture._engine.connect = custom_connect
+    assert instance_fixture.delete_table() == True
+    assert g_is_valid == True
+
+def test_delete_table_bad_engine(instance_fixture):
+    instance_fixture._engine = None
+    assert instance_fixture.delete_table() == False
+
+def test_delete_table_sqlalchemy_error(instance_fixture):
+    # Since this table is fake, SQLalchemy will not be able to find it, which
+    # will cause this to fail.
+    assert instance_fixture.delete_table() == False
