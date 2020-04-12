@@ -101,7 +101,7 @@ def _create_instances(read_env_data):
 def _menu(title, options):
     if len(options) == 0:
         return
-    
+
     msg = " ".join([str(title), "Please select what you would like to do:"])
     should_exit = False
     while not should_exit:

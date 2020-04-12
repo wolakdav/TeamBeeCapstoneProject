@@ -32,12 +32,12 @@ class Table_Dummy(Table):
 
 @pytest.fixture
 def instance_fixture():
-    return Table_Dummy("sw23", "fake")
+    return Table_Dummy("sw23", "invalid")
 
 @pytest.fixture
 def dummy_engine():
     user = "sw23"
-    passwd = "fake"
+    passwd = "invalid"
     hostname = "localhost"
     db_name = "idk_something"
     engine_info = "".join(["postgresql://", user, ":", passwd, "@", hostname, "/", db_name])
@@ -62,6 +62,22 @@ def custom_read_sql(sample_df, instance_fixture):
         return sample_df
 
     return read_sql
+
+@pytest.fixture
+def custom_connect_factory():
+    class custom_connect():
+        def __init__(self, expected_sql):
+            self.expected_sql = expected_sql
+
+        def connect(self):
+            def execute(self, sql):
+                if sql != self.expected_sql:
+                    return False
+                else:
+                    return True
+            return execute
+
+    return custom_connect
 
 
 def test_constructor_build_engine(dummy_engine):
@@ -181,13 +197,33 @@ def test_get_full_table_sqlalchemy_error(instance_fixture):
     # will cause this to fail.
     assert instance_fixture.get_full_table() is None
 
+g_valid_sql = None
+def test_create_schema_verify_sql(instance_fixture):
+    # Yes, it is not great to use global variables, but I am at a loss for how
+    # to test this without it.
+    class custom_connect():
+        def execute(self, sql):
+            global g_valid_sql
+            expected_sql = "".join(["CREATE SCHEMA IF NOT EXISTS ", instance_fixture._schema, ";"])
+            if sql != expected_sql:
+                g_valid_sql = False
+            else:
+                g_valid_sql = True
+
+    global g_valid_sql
+    instance_fixture._engine.connect = custom_connect
+    assert instance_fixture.create_schema() == True
+    assert g_valid_sql == True
+
+def test_create_schema_sqlalchemy_error(instance_fixture):
+    # Since this table is fake, SQLalchemy will not be able to find it, which
+    # will cause this to fail.
+    assert instance_fixture.create_schema() == False
 
 # TODO: mock out DB and test:
 #       
 #   create_schema
-#       happy test: returns True
 #       unset engine: returns False
-#       SQLalchemy error: returns False
 #
 #   delete_schema
 #       happy test: returns True

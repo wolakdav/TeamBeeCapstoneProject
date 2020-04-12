@@ -112,13 +112,13 @@ class CTran_Data(Table):
     def _create_table_helper(self, sample_data):
         self._print("Connecting to DB.")
         try:
-            with self._engine.connect() as conn:
-                self._print("Initializing table.")
-                if not super().create_table():
-                    self._print("ERROR: failed to create the table; cannot proceed.")
-                    return False
+            conn = self._engine.connect()
+            self._print("Initializing table.")
+            if not super().create_table():
+                self._print("ERROR: failed to create the table; cannot proceed.")
+                return False
 
-                self._print("Writing sample data to table. This will take a few minutes.")
+            self._print("Writing sample data to table. This will take a few minutes.")
 
             sample_data.to_sql(
                     self._table_name,

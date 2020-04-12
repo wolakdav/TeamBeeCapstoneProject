@@ -78,9 +78,9 @@ class Table(abc.ABC):
         self._print("Connecting to DB.")
         sql = "".join(["CREATE SCHEMA IF NOT EXISTS ", self._schema, ";"])
         try:
-            with self._engine.connect() as conn:
-                self._print(sql)
-                conn.execute(sql)
+            conn = self._engine.connect()
+            self._print(sql)
+            conn.execute(sql)
 
         except SQLAlchemyError as error:
             print("SQLAclchemy:", error)
@@ -99,9 +99,9 @@ class Table(abc.ABC):
         self._print("Connecting to DB.")
         sql = "".join(["DROP SCHEMA IF EXISTS ", self._schema, " CASCADE;"])
         try:
-            with self._engine.connect() as conn:
-                self._print(sql)
-                conn.execute(sql)
+            conn = self._engine.connect()
+            self._print(sql)
+            conn.execute(sql)
 
         except SQLAlchemyError as error:
             print("SQLAclchemy:", error)
@@ -123,9 +123,9 @@ class Table(abc.ABC):
 
         self._print("Connecting to DB.")
         try:
-            with self._engine.connect() as conn:
-                self._print(self._creation_sql)
-                conn.execute(self._creation_sql)
+            conn = self._engine.connect()
+            self._print(self._creation_sql)
+            conn.execute(self._creation_sql)
 
         except SQLAlchemyError as error:
             print("SQLAclchemy:", error)
@@ -144,9 +144,9 @@ class Table(abc.ABC):
         self._print("Connecting to DB.")
         sql = "".join(["DROP TABLE IF EXISTS " + self._schema + "." + self._table_name + ";"])
         try:
-            with self._engine.connect() as conn:
-                self._print(sql)
-                conn.execute(sql)
+            conn = self._engine.connect()
+            self._print(sql)
+            conn.execute(sql)
 
         except SQLAlchemyError as error:
             print("SQLAclchemy:", error)
