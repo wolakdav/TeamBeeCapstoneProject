@@ -215,11 +215,12 @@ def test_create_schema_sqlalchemy_error(instance_fixture):
     # will cause this to fail.
     assert instance_fixture.create_schema() == False
 
+def test_create_schema_bad_engine(instance_fixture):
+    instance_fixture._engine = None
+    assert instance_fixture.create_schema() == False
+
 # TODO: mock out DB and test:
 #       
-#   create_schema
-#       unset engine: returns False
-#
 #   delete_schema
 #       happy test: returns True
 #       unset engine: returns False
