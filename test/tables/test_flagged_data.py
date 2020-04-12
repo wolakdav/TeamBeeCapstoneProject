@@ -6,12 +6,12 @@ from src.tables import Flagged_Data
 
 @pytest.fixture
 def instance_fixture():
-    return Flagged_Data("sw23", "fake")
+    return Flagged_Data("sw23", "invalid")
 
 @pytest.fixture
 def dummy_engine():
     user = "sw23"
-    passwd = "fake"
+    passwd = "invalid"
     hostname = "localhost"
     db_name = "idk_something"
     engine_info = "".join(["postgresql://", user, ":", passwd, "@", hostname, "/", db_name])
