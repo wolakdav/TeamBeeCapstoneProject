@@ -5,6 +5,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine.base import Engine
 from src.tables import Table
 
+# Yes, it is not great to use global variables, but I am at a loss for how to
+# test some SQL variables that are local to methods this without it.
+g_valid_sql = None
+
 # Test_Dummy is used to allow for easy and precise tests of Table.
 class Table_Dummy(Table):
     def __init__(self, user=None, passwd=None, hostname="localhost", db_name="aperture", verbose=False, engine=None):
@@ -197,10 +201,7 @@ def test_get_full_table_sqlalchemy_error(instance_fixture):
     # will cause this to fail.
     assert instance_fixture.get_full_table() is None
 
-g_valid_sql = None
 def test_create_schema_verify_sql(instance_fixture):
-    # Yes, it is not great to use global variables, but I am at a loss for how
-    # to test this without it.
     class custom_connect():
         def execute(self, sql):
             global g_valid_sql
