@@ -105,7 +105,7 @@ def test_creation_sql(instance_fixture):
     assert expected == instance_fixture._creation_sql
 
 # TODO: test the overridden create_table.
-#       happy test: returns True
+#       verify sql
 #       unset engine: returns False
 #       invalid cols of result: returns False
 #       pandas error: returns False

@@ -237,14 +237,27 @@ def test_delete_schema_bad_engine(instance_fixture):
     instance_fixture._engine = None
     assert instance_fixture.delete_schema() == False
 
+def test_create_table_verify_sql(custom_connect, instance_fixture):
+    global g_is_valid
+    global g_expected
+    g_expected = instance_fixture._creation_sql
+    instance_fixture._engine.connect = custom_connect
+    assert instance_fixture.create_table() == True
+    assert g_is_valid == True
+
+def test_create_table_schema_fails(instance_fixture):
+    # Since the engine contains logic errors, it will pass the
+    # isinstance(Engine) check, but create_schema will fail during the
+    # credentials check.
+    assert instance_fixture.create_table() == False
+
+def test_create_table_bad_engine(instance_fixture):
+    instance_fixture._engine = None
+    assert instance_fixture.create_table() == False
+
 # TODO: mock out DB and test:
 #       
-#   create_table - make a fixture that mocks the connection/create_schema.
-#       happy test: returns True
-#       unset engine: returns False
-#       SQLalchemy error: returns False
-#
 #   delete_table
-#       happy test: returns True
+#       verify sql
 #       unset engine: returns False
 #       SQLalchemy error: returns False
