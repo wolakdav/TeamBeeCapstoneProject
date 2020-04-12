@@ -183,9 +183,13 @@ def test_get_full_table_happy(monkeypatch, custom_read_sql, instance_fixture):
     monkeypatch.setattr("pandas.read_sql", custom_read_sql)
     assert isinstance(instance_fixture.get_full_table(), pandas.DataFrame)
 
-def test_get_full_table_bad_engine(monkeypatch, custom_read_sql, instance_fixture):
+def test_get_full_table_bad_engine(instance_fixture):
+    instance_fixture._engine = None
+    assert instance_fixture.get_full_table() is None
+
+def test_get_full_table_read_sql_fail(monkeypatch, custom_read_sql, instance_fixture):
     monkeypatch.setattr("pandas.read_sql", custom_read_sql)
-    instance_fixture._engine = False
+    instance_fixture._engine = None
     assert instance_fixture.get_full_table() is None
 
 def test_get_full_table_mismatch_cols(monkeypatch, custom_read_sql, instance_fixture):
@@ -197,6 +201,13 @@ def test_get_full_table_sqlalchemy_error(instance_fixture):
     # Since this table is fake, SQLalchemy will not be able to find it, which
     # will cause this to fail.
     assert instance_fixture.get_full_table() is None
+
+def test_get_full_table_read_sql_exception(monkeypatch, instance_fixture):
+    def custom_read_sql(sql, engine, index_col):
+        raise KeyError
+
+    monkeypatch.setattr("pandas.read_sql", custom_read_sql)
+    assert instance_fixture.get_full_table() == None
 
 def test_create_schema_verify_sql(custom_connect, instance_fixture):
     global g_is_valid
@@ -248,6 +259,10 @@ def test_create_table_schema_fails(instance_fixture):
 
 def test_create_table_bad_engine(instance_fixture):
     instance_fixture._engine = None
+    assert instance_fixture.create_table() == False
+
+def test_create_table_sqlalchemy_error(instance_fixture):
+    instance_fixture.create_schema = lambda: True
     assert instance_fixture.create_table() == False
 
 def test_delete_table_verify_sql(custom_connect, instance_fixture):
