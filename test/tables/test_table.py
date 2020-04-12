@@ -5,9 +5,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine.base import Engine
 from src.tables import Table
 
-# Yes, it is not great to use global variables, but I am at a loss for how to
-# test some SQL variables that are local to methods this without it without
-# serious finagling.
 g_is_valid = None
 g_expected = None
 
@@ -185,8 +182,6 @@ def test_check_cols_sad(instance_fixture):
 def test_get_full_table_happy(monkeypatch, custom_read_sql, instance_fixture):
     monkeypatch.setattr("pandas.read_sql", custom_read_sql)
     assert isinstance(instance_fixture.get_full_table(), pandas.DataFrame)
-
-# TODO: for these, try catching the stdout and see which error it cites as wrong.
 
 def test_get_full_table_bad_engine(monkeypatch, custom_read_sql, instance_fixture):
     monkeypatch.setattr("pandas.read_sql", custom_read_sql)
