@@ -6,7 +6,8 @@ from sqlalchemy.engine.base import Engine
 from src.tables import Table
 
 # Yes, it is not great to use global variables, but I am at a loss for how to
-# test some SQL variables that are local to methods this without it.
+# test some SQL variables that are local to methods this without it without
+# serious finagling.
 g_is_valid = None
 g_expected = None
 
@@ -219,13 +220,25 @@ def test_create_schema_bad_engine(instance_fixture):
     instance_fixture._engine = None
     assert instance_fixture.create_schema() == False
 
+def test_delete_schema_verify_sql(custom_connect, instance_fixture):
+    global g_is_valid
+    global g_expected
+    g_expected = "".join(["DROP SCHEMA IF EXISTS ", instance_fixture._schema, " CASCADE;"])
+    instance_fixture._engine.connect = custom_connect
+    assert instance_fixture.delete_schema() == True
+    assert g_is_valid == True
+
+def test_delete_schema_sqlalchemy_error(instance_fixture):
+    # Since this table is fake, SQLalchemy will not be able to find it, which
+    # will cause this to fail.
+    assert instance_fixture.delete_schema() == False
+
+def test_delete_schema_bad_engine(instance_fixture):
+    instance_fixture._engine = None
+    assert instance_fixture.delete_schema() == False
+
 # TODO: mock out DB and test:
 #       
-#   delete_schema
-#       happy test: returns True
-#       unset engine: returns False
-#       SQLalchemy error: returns False
-#
 #   create_table - make a fixture that mocks the connection/create_schema.
 #       happy test: returns True
 #       unset engine: returns False
