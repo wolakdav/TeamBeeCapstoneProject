@@ -132,10 +132,7 @@ class CTran_Data(Table):
         except SQLAlchemyError as error:
             print("SQLAclchemy:", error)
             return False
-        except KeyError as error:
-            print("Pandas:", error)
-            return None
-        except ValueError as error:
+        except (KeyError, ValueError) as error:
             print("Pandas:", error)
             return False
 

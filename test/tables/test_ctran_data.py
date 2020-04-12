@@ -37,6 +37,14 @@ def custom_connect():
 
     return custom_connect
 
+@pytest.fixture
+def sample_df():
+    class Sample_DF:
+        def to_sql(self, x, y, if_exists, index, chunksize, schema):
+            raise ValueError
+
+    return Sample_DF
+
 
 def test_constructor_build_engine(dummy_engine):
     expected, user, passwd, hostname, db_name = dummy_engine
@@ -124,6 +132,10 @@ def test_creation_sql(instance_fixture):
             );"""])
     assert expected == instance_fixture._creation_sql
 
+def test_create_table_assets_file_check(instance_fixture):
+    instance_fixture._create_table_helper = lambda _: True
+    assert instance_fixture.create_table() == True
+
 def test_create_table_bad_engine(instance_fixture):
     instance_fixture._engine = None
     assert instance_fixture.create_table() == False
@@ -147,8 +159,17 @@ def test_create_table_helper_fails(monkeypatch, instance_fixture):
     instance_fixture._create_table_helper = lambda _: False
     assert instance_fixture.create_table() == False
 
-# TODO: test the overridden create_table.
-#       verify sql
-#       if super().create_table failes, then so should create table helper
-#       SQLalchemy error: returns False
-#       when done, have as happy a test as possible - actually read the file
+def test_create_table_helper_super_fails(monkeypatch, custom_connect, instance_fixture):
+    instance_fixture._engine.connect = custom_connect
+    instance_fixture.create_schema = lambda: False
+    assert instance_fixture._create_table_helper(pandas.DataFrame) == False
+
+def test_create_table_helper_to_sql_fails(custom_connect, sample_df, instance_fixture):
+    instance_fixture.create_schema = lambda: True
+    instance_fixture._engine.connect = custom_connect
+    assert instance_fixture._create_table_helper(sample_df()) == False
+
+def test_create_table_helper_sqlalchemy_fail(custom_connect, instance_fixture):
+    instance_fixture._engine.connect = custom_connect
+    instance_fixture.create_schema = lambda: True
+    assert instance_fixture.create_table() == False
