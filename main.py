@@ -1,9 +1,13 @@
 import os
+import sys
+
 from src.tables import CTran_Data
 from src.tables import Flagged_Data
 from src.tables import Flags
 from src.tables import Service_Periods
 from src.config import config
+from src.interface import ArgInterface
+
 
 ##############################################################################
 # Private Classes
@@ -24,6 +28,11 @@ def cli(read_env_data=False):
         flagged.create_table()
 
     ctran, flagged, flags, service_periods = _create_instances(read_env_data)
+
+    if len(sys.argv) > 1:
+        ai = ArgInterface()
+        return ai.query_with_args(ctran, sys.argv[1:])
+
 
     options = [
         _Option("(or ctrl-d) Exit.", lambda: "Exit"),
@@ -104,7 +113,7 @@ def _create_instances(read_env_data):
 def _menu(title, options):
     if len(options) == 0:
         return
-    
+
     msg = " ".join([str(title), "Please select what you would like to do:"])
     should_exit = False
     while not should_exit:
