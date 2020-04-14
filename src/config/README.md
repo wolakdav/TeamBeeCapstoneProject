@@ -33,6 +33,10 @@ elif result == BoundsResult.MIN_ERROR:
     print("it's too low!")
 elif result == BoundsResult.MAX_ERROR:
     print("it's too high!")
+
+#also works for dates
+result = config.check_bounds('service_date', '1990-01-01')
+
 ```
 
 ## Usage (Command Line)
