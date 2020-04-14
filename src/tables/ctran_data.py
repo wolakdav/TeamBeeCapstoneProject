@@ -109,6 +109,7 @@ class CTran_Data(Table):
 
     # Query all data between date_from and date_to, dates
     # NOTE: if there is no ctran_data table, this will not work, obviously.
+    # TODO confer with Sawyer over testing
     def query_date_range(self, date_from, date_to):
         if self._engine is None:
             self._print("ERROR: self._engine is None, cannot continue.")
@@ -119,11 +120,11 @@ class CTran_Data(Table):
                        self._schema,
                        ".",
                        self._table_name,
-                       " WHERE service_date BETWEEN ",
-                       date_from.strftime("YYYY-MM-DD"),
-                       " AND ",
-                       date_to.strftime("YYYY-MM-DD"),
-                       ";"])
+                       " WHERE service_date BETWEEN '",
+                       date_from.strftime("%Y-%m-%d"),
+                       "' AND '",
+                       date_to.strftime("%Y-%m-%d"),
+                       "';"])
         self._print(sql)
         try:
             df = pandas.read_sql(sql, self._engine, index_col=self._index_col)

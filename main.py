@@ -1,14 +1,11 @@
 import os
 import sys
-import argparse
-from datetime import date, datetime
 
-from src.logger import Logger
-from src.logger import Severity
 from src.tables import CTran_Data
 from src.tables import Flagged_Data
 from src.tables import Flags
 from src.tables import Service_Periods
+from src.interface import ArgInterface
 
 
 ##############################################################################
@@ -32,7 +29,8 @@ def cli(read_env_data=False):
     ctran, flagged, flags, service_periods = _create_instances(read_env_data)
 
     if len(sys.argv) > 1:
-        return _process_arguments(ctran)
+        ai = ArgInterface()
+        return ai.query_with_args(ctran, sys.argv[1:])
 
 
     options = [
@@ -151,30 +149,6 @@ def _get_int(min_value, max_value, cli_symbol="> "):
 
     return option
 
-###########################################################
-
-def _process_arguments(ctran):
-    def service_date(arg):
-        try:
-            return datetime.strptime(arg, "")
-        except ValueError:
-            err_msg = "Invalid service date format: {0}, YYYY-MM-DD expected.".format(arg)
-            # Logger.log(err_msg, Severity.ERROR)
-            raise argparse.ArgumentTypeError(err_msg)
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--date-start", required=True, type=service_date)
-    parser.add_argument("--date-end", required=True, type=service_date)
-
-    try:
-        ns, args = parser.parse_args()
-        df = ctran.query_date_range()
-        print("Received " + str(len(df.index)) + " rows.")
-
-    except argparse.ArgumentTypeError:
-        return
-
-    # TODO run pipeline on data frame (query results)...
 
 ###############################################################################
 # Main
