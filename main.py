@@ -77,14 +77,12 @@ def _create_instances(read_env_data):
     ctran = None
     if read_env_data:
         try:
-
             config.ingest_env()
             user = config.get_value('pipeline_user')
             passwd = config.get_value('pipeline_passwd')
             hostname = config.get_value('hostname')
             db_name = config.get_value('db_name')
             
-
         except KeyError as err:
             print("Could not read environment data " + str(err) + "; terminating.")
             return
