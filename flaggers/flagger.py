@@ -41,6 +41,9 @@ class Flags(Enum):
   #Unopened door flag
   UNOPENED_DOOR = auto()
 
+  #Duplicate flag
+  DUPLICATE = auto()
+
 class Flagger(abc.ABC):
   # Name must be overwritten
   @property

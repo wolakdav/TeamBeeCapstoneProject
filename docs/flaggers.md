@@ -51,4 +51,8 @@ Flag is turned on when bus stops at a certain distance away from the stop, meani
 
 ###Unopened door Flag
 Flag is turned on when door is not opened during stop (perhaps no passengers getting on/off, or test drive of the bus, or any other reason)
-  UNOPENED_DORR                       ['door' is 0 (door field specifies number of time door has been opened)]
+  UNOPENED_DOOR                       ['door' is 0 (door field specifies number of time door has been opened)]
+
+###Duplicate Flag
+Flag is turned on when there is a duplicate row exists in the dataset
+  DUPLICATE                           [Checks full dataset for another identical row]
