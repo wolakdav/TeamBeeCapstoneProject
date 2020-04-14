@@ -72,3 +72,10 @@ class Config:
                     return BoundsResult.MIN_ERROR
 
             return BoundsResult.VALID
+
+if __name__ == "__main__":
+     if len(sys.argv) > 1:
+         if (sys.argv[1] == "load"):
+             config = Config()
+             config.load()
+             print("Loaded config data.")
