@@ -25,6 +25,12 @@ class ArgInterface:
 
     def _parse_cl_args(self, args):
         parser = argparse.ArgumentParser()
-        parser.add_argument("--date-start", required=True, type=self._service_date)
-        parser.add_argument("--date-end", required=True, type=self._service_date)
+        parser.add_argument("--date-start",
+                            help="Format: --date-start=YYYY-MM-DD (ex. 2020-01-01)",
+                            required=True,
+                            type=self._service_date)
+        parser.add_argument("--date-end",
+                            help="Format: --date-end=YYYY-MM-DD (ex. 2020-01-01)",
+                            required=True,
+                            type=self._service_date)
         return parser.parse_args(args)
