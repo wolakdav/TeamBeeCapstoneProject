@@ -12,14 +12,14 @@ class BadData():
 
 @pytest.fixture
 def unobserved_stop_flagger():
-  return [f for f in flaggers if f.name == 'UnobservedStop'][0]
+  return [f for f in flaggers if f.name == 'Unobserved Stop'][0]
 
 @pytest.fixture
-def good_data:
+def good_data():
 	return vars(GoodData())
 
 @pytest.fixture
-def bad_data:
+def bad_data():
 	return vars(BadData())
 
 #Should NOT return a flags, since data is good [returns empty list]

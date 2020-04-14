@@ -3,7 +3,7 @@ from .flagger import Flagger, Flags, flaggers
 #Class that implements unopened door check:
 #That is if the bus stopped but door hasn't been opened
 class UnopenedDoor(Flagger):
-	name = 'UnopenedDoor'
+	name = 'Unopened Door'
 
 	def flag(self, data):
 		"""
@@ -18,11 +18,11 @@ class UnopenedDoor(Flagger):
 			list: either empty or containing UNOPENED_DOOR Flag
 		"""
 
-	flag = []
+		flag = []
 
-	if('door' in data) and (data.door == 0):
-		flag.append(Flags.UNOPENED_DOOR)
+		if('door' in data) and (data['door'] == 0):
+			flag.append(Flags.UNOPENED_DOOR)
 
-	return flag
+		return flag
 
 flaggers.append(UnopenedDoor())

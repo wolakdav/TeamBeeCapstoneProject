@@ -18,13 +18,13 @@ class Duplicate(Flagger):
 			list: either empty or containing DUPLICATE Flag
 		"""
 
-	flag = []
+		flag = []
 
-	for dataRow in data:
-		if(vars(row) == vars(dataRow)):
-			flag.append(Flags.DUPLICATE)
-			break	
+		for dataRow in data:
+			if(vars(row) == vars(dataRow)):
+				flag.append(Flags.DUPLICATE)
+				break	
 
-	return flag
+		return flag
 
-flaggers.append(UnopenedDoor())
+flaggers.append(Duplicate())
