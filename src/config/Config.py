@@ -1,5 +1,6 @@
 import sys
 import json
+import os
 from enum import Enum
 
 class BoundsResult(Enum):
@@ -7,11 +8,23 @@ class BoundsResult(Enum):
     MAX_ERROR = 2 #value is greater than MAX
     MIN_ERROR = 3 #value is less than MIN
 
-class Config:    
-    def load(self, filename=CONFIG_FILE, debug=False):
+class Config:
+    def __init__(self):
+        self._data = {}
+
+    def load(self, filename="./src/config/config.json", debug=False):
         with open(filename) as f:
             self._data = json.load(f)
-            print(self._data)
+
+    def ingest_env(self):
+        if "PIPELINE_USER" in os.environ:
+            self._data['pipeline_user'] = os.environ["PIPELINE_USER"]
+        if "PIPELINE_PASSWD" in os.environ:
+            self._data['pipeline_passwd'] = os.environ["PIPELINE_PASSWD"]
+        if "PIPELINE_HOSTNAME" in os.environ:
+            self._data['pipeline_hostname'] = os.environ["PIPELINE_HOSTNAME"]
+        if "PIPELINE_DB_NAME" in os.environ:
+            self._data['pipeline_db_name'] = os.environ["PIPELINE_DB_NAME"]
 
     def set_value(self, name, val):
         self._data[name] = val

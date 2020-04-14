@@ -3,7 +3,7 @@ from src.tables import CTran_Data
 from src.tables import Flagged_Data
 from src.tables import Flags
 from src.tables import Service_Periods
-
+from src.config import config
 
 ##############################################################################
 # Private Classes
@@ -67,6 +67,7 @@ def db_cli(ctran, flagged, flags, service_periods):
 # Private Functions
 
 def _create_instances(read_env_data):
+    config.load()
     try:
         if not read_env_data and os.environ["PIPELINE_ENV_DATA"]:
             read_env_data = True
@@ -76,10 +77,14 @@ def _create_instances(read_env_data):
     ctran = None
     if read_env_data:
         try:
-            user = os.environ["PIPELINE_USER"]
-            passwd = os.environ["PIPELINE_PASSWD"]
-            hostname = os.environ["PIPELINE_HOSTNAME"]
-            db_name = os.environ["PIPELINE_DB_NAME"]
+
+            config.ingest_env()
+            user = config.get_value('pipeline_user')
+            passwd = config.get_value('pipeline_passwd')
+            hostname = config.get_value('hostname')
+            db_name = config.get_value('db_name')
+            
+
         except KeyError as err:
             print("Could not read environment data " + str(err) + "; terminating.")
             return

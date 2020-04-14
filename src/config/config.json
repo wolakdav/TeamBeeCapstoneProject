@@ -1,4 +1,11 @@
 {
   "email": "test@test.com",
-  "columns": { "id": { "max": "NA", "min": 0 } }
+  "pipeline_user": "sw23",
+  "pipeline_passwd": "fake",
+  "pipeline_hostname": "localhost",
+  "pipeline_db_name": "aperature",
+  "columns": {
+    "vehicle_number": { "max": "NA", "min": 0 },
+    "maximum_speed": { "max": 150, "min": 0 }
+  }
 }
