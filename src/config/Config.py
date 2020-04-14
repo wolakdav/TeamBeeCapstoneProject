@@ -1,6 +1,9 @@
 import sys
 import json
 import os
+from datetime import datetime
+from dateutil.parser import parse
+
 from enum import Enum
 
 class BoundsResult(Enum):
@@ -18,13 +21,13 @@ class Config:
 
     def ingest_env(self):
         if "PIPELINE_USER" in os.environ:
-            self._data['pipeline_user'] = os.environ["PIPELINE_USER"]
+            self._data["pipeline_user"] = os.environ["PIPELINE_USER"]
         if "PIPELINE_PASSWD" in os.environ:
-            self._data['pipeline_passwd'] = os.environ["PIPELINE_PASSWD"]
+            self._data["pipeline_passwd"] = os.environ["PIPELINE_PASSWD"]
         if "PIPELINE_HOSTNAME" in os.environ:
-            self._data['pipeline_hostname'] = os.environ["PIPELINE_HOSTNAME"]
+            self._data["pipeline_hostname"] = os.environ["PIPELINE_HOSTNAME"]
         if "PIPELINE_DB_NAME" in os.environ:
-            self._data['pipeline_db_name'] = os.environ["PIPELINE_DB_NAME"]
+            self._data["pipeline_db_name"] = os.environ["PIPELINE_DB_NAME"]
 
     def set_value(self, name, val):
         self._data[name] = val
@@ -34,22 +37,45 @@ class Config:
             return self._data[val]
 
     def check_bounds(self, column_name, val):
-        if column_name in self._data['columns']:
-            col = self._data['columns'][column_name]
+        if "date" in column_name:
+            print(val)
+            val = parse(val)
 
-            if col['max'] != 'NA':
-                if val > col['max']:
+        if column_name in self._data["columns"]:
+            col = self._data["columns"][column_name]
+
+            col_max = None
+            col_min = None
+
+            if "date" in column_name:
+                if col['max'] != 'NA':
+                    col_max = parse(col["max"])
+                else:
+                    col_max = col['max']
+            else:
+                col_max = col["max"]
+
+            if "date" in column_name:
+                if col['min'] != 'NA':
+                    col_min = parse(col["min"])
+                else:
+                    col_min = col['min']
+            else:
+                col_min = col["min"]
+
+            if col["max"] != "NA":
+                if val > col_max:
                     return BoundsResult.MAX_ERROR
 
-            if col['min'] != 'NA':
-                if val < col['min']:
+            if col["min"] != "NA":
+                if val < col_min:
                     return BoundsResult.MIN_ERROR
 
             return BoundsResult.VALID
 
 if __name__ == "__main__":
      if len(sys.argv) > 1:
-         if (sys.argv[1] == 'load'):
+         if (sys.argv[1] == "load"):
              config = Config()
              config.load()
-             print('Loaded config data.')
+             print("Loaded config data.")
