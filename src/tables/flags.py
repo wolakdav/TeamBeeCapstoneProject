@@ -7,7 +7,6 @@ class Flags(Table):
         self._table_name = "flags"
         self._index_col = "flag_id"
         self._expected_cols = set([
-            "flag_id",
             "description"
         ])
         self._creation_sql = "".join(["""
