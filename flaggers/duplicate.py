@@ -20,10 +20,9 @@ class Duplicate(Flagger):
 
 		flag = []
 
-		for dataRow in data:
-			if(vars(row) == vars(dataRow)):
-				flag.append(Flags.DUPLICATE)
-				break	
+		#Count number of occurances in the list, and if occurs more than once append Flag to flag list.
+		if(data.count(row)) > 1:
+			flag.append(Flags.DUPLICATE)
 
 		return flag
 
