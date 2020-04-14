@@ -20,18 +20,16 @@ def loaded_config(tmp_path):
         "columns": { "vehicle_number": { "max": "NA", "min": 0 }, "maximum_speed" : {"max" : 150, "min" : 0} }
     }
 
-
     p = tmp_path / "test_config.json"
     p.write_text(json.dumps(mock_config))
     config.load(p)
     return config
     
 def test_get_set_config(empty_config):
-    config.set_value('test', 5)
-    assert config.get_value('test') == 5
+    config.set_value("test", 5)
+    assert config.get_value("test") == 5
 
 def test_ingest_env(monkeypatch, empty_config):
-    """Set the USER env var to assert the behavior."""
     monkeypatch.setenv("PIPELINE_USER", "test_user")
     monkeypatch.setenv("PIPELINE_PASSWD", "test_pass")
     empty_config.ingest_env()
@@ -49,19 +47,16 @@ def test_load_config(tmp_path):
         "columns": { "vehicle_number": { "max": "NA", "min": 0 } }
     }
 
-
     p = tmp_path / "test_config.json"
     p.write_text(json.dumps(mock_config))
     
     assert p.read_text() == json.dumps(mock_config)
     
     config_dict = json.loads(p.read_text())
-    assert config_dict['email'] == mock_config['email']
+    assert config_dict["email"] == mock_config["email"]
 
 def test_check_bounds(loaded_config):
-
-
-    assert loaded_config.check_bounds('vehicle_number', 2) == BoundsResult.VALID
-    assert loaded_config.check_bounds('maximum_speed', 180) == BoundsResult.MAX_ERROR
-    assert loaded_config.check_bounds('maximum_speed', -1) == BoundsResult.MIN_ERROR
+    assert loaded_config.check_bounds("vehicle_number", 2) == BoundsResult.VALID
+    assert loaded_config.check_bounds("maximum_speed", 180) == BoundsResult.MAX_ERROR
+    assert loaded_config.check_bounds("maximum_speed", -1) == BoundsResult.MIN_ERROR
 
