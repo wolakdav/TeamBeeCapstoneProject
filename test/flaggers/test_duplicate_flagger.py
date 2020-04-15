@@ -59,3 +59,4 @@ def test_duplicate_flagger_on_good_data(duplicate_flagger, good_data):
 def test_duplicate_flagger_on_bad_data(duplicate_flagger, bad_data):
 	flags = duplicate_flagger.flag(bad_data[0], bad_data)
 	assert len(flags) == 1
+	assert Flags.DUPLICATE in flags

@@ -32,3 +32,4 @@ def test_unopened_door_flagger_on_good_data(unopened_door_flagger, good_data):
 def test_unopened_door_flagger_on_bad_data(unopened_door_flagger, bad_data):
 	flags = unopened_door_flagger.flag(bad_data)
 	assert len(flags) == 1
+	assert Flags.UNOPENED_DOOR in flags
