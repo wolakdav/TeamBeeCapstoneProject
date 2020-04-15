@@ -58,7 +58,6 @@ def test_load_config(tmp_path):
 
 def test_check_bounds(loaded_config):
     assert loaded_config.check_bounds("vehicle_number", 2) == BoundsResult.VALID
-    assert loaded_config.check_bounds("vehicle_number", 2) == BoundsResult.VALID
     
     assert loaded_config.check_bounds("maximum_speed", 180) == BoundsResult.MAX_ERROR
     assert loaded_config.check_bounds("maximum_speed", -1) == BoundsResult.MIN_ERROR
