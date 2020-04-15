@@ -80,8 +80,8 @@ def _create_instances(read_env_data):
             config.ingest_env()
             user = config.get_value('pipeline_user')
             passwd = config.get_value('pipeline_passwd')
-            hostname = config.get_value('hostname')
-            db_name = config.get_value('db_name')
+            hostname = config.get_value('pipeline_hostname')
+            db_name = config.get_value('pipeline_db_name')
             
         except KeyError as err:
             print("Could not read environment data " + str(err) + "; terminating.")
@@ -89,7 +89,15 @@ def _create_instances(read_env_data):
 
         ctran = CTran_Data(user, passwd, hostname, db_name, verbose=True)
     else:
-        ctran = CTran_Data(verbose=True)
+        user = config.get_value('pipeline_user')
+        passwd = config.get_value('pipeline_passwd')
+        hostname = config.get_value('pipeline_hostname')
+        db_name = config.get_value('pipeline_db_name')
+
+        if user and passwd and hostname and db_name:
+            ctran = CTran_Data(user, passwd, hostname, db_name, verbose=True)
+        else:
+            ctran = CTran_Data(verbose=True)
 
     engine_url = ctran.get_engine().url
     flagged = Flagged_Data(verbose=True, engine=engine_url)
