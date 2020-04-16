@@ -1,4 +1,4 @@
-## Usage (in Python)
+## Config Usage (in Python)
 
 
 ### Config JSON file
@@ -55,14 +55,4 @@ elif result == BoundsResult.MAX_ERROR:
 #also works for dates
 result = config.check_bounds('service_date', '1990-01-01')
 
-```
-
-## Usage (Command Line)
-
-(currently unclear what this is for)
-
-```
-$ python3 Config.py load
-
-Loaded config data.
 ```

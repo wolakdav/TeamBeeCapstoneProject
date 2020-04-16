@@ -15,7 +15,7 @@ class Config:
     def __init__(self):
         self._data = {}
 
-    def load(self, filename="./src/config/config.json", debug=False):
+    def load(self, filename="./assets/config.json", debug=False):
         with open(filename) as f:
             self._data = json.load(f)
 
@@ -38,7 +38,6 @@ class Config:
 
     def check_bounds(self, column_name, val):
         if "date" in column_name:
-            print(val)
             val = parse(val)
 
         if column_name in self._data["columns"]:
