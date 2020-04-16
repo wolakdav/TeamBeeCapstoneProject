@@ -81,10 +81,13 @@ class Config:
                     if not self._is_na(col['min']):
                         col_min = parse(col['min'])
             else:
-                if not self._is_na(col['max']):
-                    col_max = col['max']
-                if not self._is_na(col['min']):
-                    col_min = col['min']
+                if 'max' in col:
+                    if not self._is_na(col['max']):
+                        col_max = col['max']
+                if 'min' in col:
+                    if not self._is_na(col['min']):
+                        col_min = col['min']
+                        
             if 'max' in col:
                 if not self._is_na(col['max']):
                     if val > col_max:
