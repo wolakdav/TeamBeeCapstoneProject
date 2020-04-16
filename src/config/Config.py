@@ -15,8 +15,8 @@ class BoundsResult(Enum):
 class Config:
     def __init__(self):
         self._data = {}
-
     def load(self, filename=CONFIG_FILENAME, read_env_data=False, debug=False):
+        self._filename = filename
         with open(filename) as f:
             self._data = json.load(f)
         if read_env_data:
@@ -99,7 +99,9 @@ class Config:
                     return BoundsResult.MIN_ERROR
 
         return BoundsResult.VALID
-    def save(self, filename=CONFIG_FILENAME):
-        with open(filename, 'w') as f:
+    def save(self, new_filename=""):
+        if not new_filename:
+            new_filename = self._filename
+        with open(new_filename, 'w') as f:
             json.dump(self._data, f)
 
