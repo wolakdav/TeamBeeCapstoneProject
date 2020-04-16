@@ -3,8 +3,9 @@ import json
 import os
 from datetime import datetime
 from dateutil.parser import parse
-
 from enum import Enum
+
+CONFIG_FILENAME = "./assets/config.json"
 
 class BoundsResult(Enum):
     VALID = 1     #value is within range
@@ -15,7 +16,7 @@ class Config:
     def __init__(self):
         self._data = {}
 
-    def load(self, filename="./assets/config.json", read_env_data=False, debug=False):
+    def load(self, filename=CONFIG_FILENAME, read_env_data=False, debug=False):
         with open(filename) as f:
             self._data = json.load(f)
         if read_env_data:
@@ -54,15 +55,22 @@ class Config:
             return False
 
     def set_value(self, name, val):
-        self._data[name] = val
+        if not name == 'columns':
+            self._data[name] = val
 
-    def get_value(self, val):
-        if val in self._data:
-            return self._data[val]
+    def get_value(self, name):
+        if not name == 'columns':
+            if name in self._data:
+                return self._data[name]
+
+    def set_bounds(self, column_name, min, max):
+        self._data['columns'][column_name] = {'min' : min, 'max' : max}
+
+    def get_bounds(self, column_name):
+        if column_name in self._data['columns']:
+            return self._data['columns'][column_name]
 
     def check_bounds(self, column_name, val):
-        
-
         if column_name in self._data["columns"]:
             col = self._data["columns"][column_name]
 
@@ -90,11 +98,8 @@ class Config:
                 if val < col_min:
                     return BoundsResult.MIN_ERROR
 
-            return BoundsResult.VALID
+        return BoundsResult.VALID
+    def save(self, filename=CONFIG_FILENAME):
+        with open(filename, 'w') as f:
+            json.dump(self._data, f)
 
-if __name__ == "__main__":
-     if len(sys.argv) > 1:
-         if (sys.argv[1] == "load"):
-             config = Config()
-             config.load()
-             print("Loaded config data.")

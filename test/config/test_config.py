@@ -25,6 +25,7 @@ def loaded_config(tmp_path):
     p = tmp_path / "test_config.json"
     p.write_text(json.dumps(MOCK_CONFIG))
     config.load(p)
+
     return config
     
 def test_get_set_config(empty_config):
@@ -46,18 +47,30 @@ def test_get_set_loaded_config(loaded_config):
     assert config.get_value("pipeline_user") == "sw23"
 
 def test_is_date(empty_config):
-    assert config._is_date('2010-01-01')
-    assert not config._is_date('10-01-01')
-    assert not config._is_date('201k-01-01')
-    assert not config._is_date('01-01')
+    assert config._is_date("2010-01-01")
+    assert not config._is_date("10-01-01")
+    assert not config._is_date("201k-01-01")
+    assert not config._is_date("01-01")
 
 def test_is_na(empty_config):
-    assert config._is_na('na')
-    assert config._is_na('NA')
-    assert config._is_na('')
+    assert config._is_na("na")
+    assert config._is_na("NA")
+    assert config._is_na("")
     assert not config._is_na(3)
     assert not config._is_na(3.2)
-    assert not config._is_na('2010-02-02')
+    assert not config._is_na("2010-02-02")
+
+def test_get_set_bounds(loaded_config):
+    assert loaded_config.get_bounds("vehicle_number")["max"] == "NA"
+    assert loaded_config.get_bounds("vehicle_number")["min"] == 0
+    
+    loaded_config.set_bounds("vehicle_number", 200, 400)
+    assert loaded_config.get_bounds("vehicle_number")["min"] == 200
+    assert loaded_config.get_bounds("vehicle_number")["max"] == 400
+
+    assert loaded_config.check_bounds("vehicle_number", 199) == BoundsResult.MIN_ERROR
+    assert loaded_config.check_bounds("vehicle_number", 300) == BoundsResult.VALID
+    assert loaded_config.check_bounds("vehicle_number", 401) == BoundsResult.MAX_ERROR
 
 def test_check_bounds(loaded_config):
     assert loaded_config.check_bounds("vehicle_number", 2) == BoundsResult.VALID
@@ -65,10 +78,23 @@ def test_check_bounds(loaded_config):
     assert loaded_config.check_bounds("maximum_speed", 180) == BoundsResult.MAX_ERROR
     assert loaded_config.check_bounds("maximum_speed", -1) == BoundsResult.MIN_ERROR
 
-    good_date_str = '2011-01-03'
-    bad_date_str = '1970-01-03'
+    good_date_str = "2011-01-03"
+    bad_date_str = "1970-01-03"
 
     assert loaded_config.check_bounds("service_date", good_date_str) == BoundsResult.VALID
     assert loaded_config.check_bounds("service_date", bad_date_str) == BoundsResult.MIN_ERROR
 
+def test_save_config(loaded_config, tmp_path):
+    p = tmp_path / "new_config.json"
+
+    config.set_value('savetest', 'test')
+    config.set_bounds('savetestbounds', 0, 100)
+    config.save(p)
+ 
+    config.load(p)
+    assert config.get_value('savetest') == 'test'
+    assert config.get_bounds('savetestbounds')['min'] == 0
+    assert config.get_bounds('savetestbounds')['max'] == 100
+
+    return config
 
