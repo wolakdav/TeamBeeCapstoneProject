@@ -74,24 +74,25 @@ class Config:
 
             if self._is_date(val):
                 val = parse(val)
-                if not self._is_na(col['max']):
-                    col_max = parse(col['max'])
-                if not self._is_na(col['min']):
-                    col_min = parse(col['min'])
+                if 'max' in col:
+                    if not self._is_na(col['max']):
+                        col_max = parse(col['max'])
+                if 'min' in col:
+                    if not self._is_na(col['min']):
+                        col_min = parse(col['min'])
             else:
                 if not self._is_na(col['max']):
                     col_max = col['max']
                 if not self._is_na(col['min']):
                     col_min = col['min']
-
-            if not self._is_na(col['max']):
-                if val > col_max:
-                    return BoundsResult.MAX_ERROR
-
-            if not self._is_na(col['min']):
-                print(val)
-                if val < col_min:
-                    return BoundsResult.MIN_ERROR
+            if 'max' in col:
+                if not self._is_na(col['max']):
+                    if val > col_max:
+                        return BoundsResult.MAX_ERROR
+            if 'min' in col:
+                if not self._is_na(col['min']):
+                    if val < col_min:
+                        return BoundsResult.MIN_ERROR
 
         return BoundsResult.VALID
     def save(self, new_filename=""):

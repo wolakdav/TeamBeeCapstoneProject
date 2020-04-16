@@ -12,9 +12,8 @@ MOCK_CONFIG = {
         "pipeline_passwd": "fake",
         "pipeline_hostname": "localhost",
         "pipeline_db_name": "aperature",
-        "columns": { "vehicle_number": { "max": "NA", "min": 0 }, "maximum_speed" : {"max" : 150, "min" : 0}, "service_date" : {"max" : "NA", "min" : "1990-01-01"} }
+        "columns": { "vehicle_number": { "max": "NA", "min": 0 }, "maximum_speed" : {"max" : 150, "min" : 0}, "service_date" : { "min" : "1990-01-01"} }
     }
-
 
 @pytest.fixture
 def empty_config():
