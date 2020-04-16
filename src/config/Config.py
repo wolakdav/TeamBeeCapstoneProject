@@ -2,7 +2,7 @@ import sys
 import json
 import os
 from datetime import datetime
-from dateutil.parser import parse
+from dateutil.parser import parse, ParserError
 from enum import Enum
 
 CONFIG_FILENAME = "./assets/config.json"
@@ -35,21 +35,16 @@ class Config:
     def _is_date(self, val):
         if not isinstance(val, str):
             return False
-
-        if len(val) == 10:
-            for i in range(len(val)):
-                if i == 4 or i == 7:
-                    if val[i] != '-':
-                        return False      
-                else:
-                    if not val[i].isnumeric():
-                        return False
-        else:
-            return False                
+        try:
+            parse(val)
+        except ParserError:
+            return False
+            
         return True
 
     def _is_na(self, val):
-        if val == 'NA' or val == 'na' or val == '':
+        cleaned = str(val).lower()
+        if cleaned == 'na' or cleaned == 'n/a' or cleaned == '':
             return True
         else:
             return False

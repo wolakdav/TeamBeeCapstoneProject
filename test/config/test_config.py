@@ -48,13 +48,16 @@ def test_get_set_loaded_config(loaded_config):
 
 def test_is_date(empty_config):
     assert config._is_date("2010-01-01")
-    assert not config._is_date("10-01-01")
-    assert not config._is_date("201k-01-01")
-    assert not config._is_date("01-01")
+    assert not config._is_date("201k-01-01")    
+    assert not config._is_date("notadate")  
+    assert not config._is_date("not-a-date")
+
 
 def test_is_na(empty_config):
     assert config._is_na("na")
+    assert config._is_na("n/a")
     assert config._is_na("NA")
+    assert config._is_na("N/A")
     assert config._is_na("")
     assert not config._is_na(3)
     assert not config._is_na(3.2)
