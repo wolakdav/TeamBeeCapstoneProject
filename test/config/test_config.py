@@ -6,13 +6,7 @@ from src.config import config
 from src.config import BoundsResult
 
 
-@pytest.fixture
-def empty_config():
-    return config
-
-@pytest.fixture
-def loaded_config(tmp_path):
-    mock_config = {
+MOCK_CONFIG = {
         "email": "test@test.com",
         "pipeline_user": "sw23",
         "pipeline_passwd": "fake",
@@ -21,8 +15,15 @@ def loaded_config(tmp_path):
         "columns": { "vehicle_number": { "max": "NA", "min": 0 }, "maximum_speed" : {"max" : 150, "min" : 0}, "service_date" : {"max" : "NA", "min" : "1990-01-01"} }
     }
 
+
+@pytest.fixture
+def empty_config():
+    return config
+
+@pytest.fixture
+def loaded_config(tmp_path):
     p = tmp_path / "test_config.json"
-    p.write_text(json.dumps(mock_config))
+    p.write_text(json.dumps(MOCK_CONFIG))
     config.load(p)
     return config
     
@@ -38,23 +39,11 @@ def test_ingest_env(monkeypatch, empty_config):
     assert empty_config.get_value("pipeline_user") == "test_user"
     assert empty_config.get_value("pipeline_passwd") == "test_pass"
 
-def test_load_config(tmp_path):
-    mock_config = {
-        "email": "test@test.com",
-        "pipeline_user": "sw23",
-        "pipeline_passwd": "fake",
-        "pipeline_hostname": "localhost",
-        "pipeline_db_name": "aperature",
-        "columns": { "vehicle_number": { "max": "NA", "min": 0 } }
-    }
-
-    p = tmp_path / "test_config.json"
-    p.write_text(json.dumps(mock_config))
+def test_get_set_loaded_config(loaded_config):
+    config.set_value("test", 5)
+    assert config.get_value("test") == 5
     
-    assert p.read_text() == json.dumps(mock_config)
-    
-    config_dict = json.loads(p.read_text())
-    assert config_dict["email"] == mock_config["email"]
+    assert config.get_value("pipeline_user") == "sw23"
 
 def test_check_bounds(loaded_config):
     assert loaded_config.check_bounds("vehicle_number", 2) == BoundsResult.VALID
