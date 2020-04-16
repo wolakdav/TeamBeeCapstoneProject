@@ -1,1 +1,0 @@
-{"email": "test@test.com", "pipeline_user": "sw23", "pipeline_passwd": "fake", "pipeline_hostname": "localhost", "pipeline_db_name": "aperature", "columns": {"vehicle_number": {"max": "NA", "min": 0}, "maximum_speed": {"max": 150, "min": 0}, "service_date": {"max": "NA", "min": "1990-01-01"}, "savetestbounds": {"min": 0, "max": 100}}, "savetest": "test"}
