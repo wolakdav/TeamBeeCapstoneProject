@@ -32,12 +32,14 @@ class Config:
             self._data["pipeline_db_name"] = os.environ["PIPELINE_DB_NAME"]
 
     def _is_date(self, val):
+        if not isinstance(val, str):
+            return False
+
         if len(val) == 10:
             for i in range(len(val)):
                 if i == 4 or i == 7:
                     if val[i] != '-':
-                        return False
-                        
+                        return False      
                 else:
                     if not val[i].isnumeric():
                         return False
@@ -50,6 +52,7 @@ class Config:
             return True
         else:
             return False
+
     def set_value(self, name, val):
         self._data[name] = val
 
@@ -58,8 +61,7 @@ class Config:
             return self._data[val]
 
     def check_bounds(self, column_name, val):
-        if "date" in column_name:
-            val = parse(val)
+        
 
         if column_name in self._data["columns"]:
             col = self._data["columns"][column_name]
@@ -67,27 +69,24 @@ class Config:
             col_max = None
             col_min = None
 
-            if "date" in column_name:
-                if col['max'] != 'NA':
-                    col_max = parse(col["max"])
-                else:
+            if self._is_date(val):
+                val = parse(val)
+                if not self._is_na(col['max']):
+                    col_max = parse(col['max'])
+                if not self._is_na(col['min']):
+                    col_min = parse(col['min'])
+            else:
+                if not self._is_na(col['max']):
                     col_max = col['max']
-            else:
-                col_max = col["max"]
-
-            if "date" in column_name:
-                if col['min'] != 'NA':
-                    col_min = parse(col["min"])
-                else:
+                if not self._is_na(col['min']):
                     col_min = col['min']
-            else:
-                col_min = col["min"]
 
-            if col["max"] != "NA":
+            if not self._is_na(col['max']):
                 if val > col_max:
                     return BoundsResult.MAX_ERROR
 
-            if col["min"] != "NA":
+            if not self._is_na(col['min']):
+                print(val)
                 if val < col_min:
                     return BoundsResult.MIN_ERROR
 
