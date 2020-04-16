@@ -31,6 +31,25 @@ class Config:
         if "PIPELINE_DB_NAME" in os.environ:
             self._data["pipeline_db_name"] = os.environ["PIPELINE_DB_NAME"]
 
+    def _is_date(self, val):
+        if len(val) == 10:
+            for i in range(len(val)):
+                if i == 4 or i == 7:
+                    if val[i] != '-':
+                        return False
+                        
+                else:
+                    if not val[i].isnumeric():
+                        return False
+        else:
+            return False                
+        return True
+
+    def _is_na(self, val):
+        if val == 'NA' or val == 'na' or val == '':
+            return True
+        else:
+            return False
     def set_value(self, name, val):
         self._data[name] = val
 

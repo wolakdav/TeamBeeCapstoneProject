@@ -45,6 +45,20 @@ def test_get_set_loaded_config(loaded_config):
     
     assert config.get_value("pipeline_user") == "sw23"
 
+def test_is_date(empty_config):
+    assert config._is_date('2010-01-01')
+    assert not config._is_date('10-01-01')
+    assert not config._is_date('201k-01-01')
+    assert not config._is_date('01-01')
+
+def test_is_na(empty_config):
+    assert config._is_na('na')
+    assert config._is_na('NA')
+    assert config._is_na('')
+    assert not config._is_na(3)
+    assert not config._is_na(3.2)
+    assert not config._is_na('2010-02-02')
+
 def test_check_bounds(loaded_config):
     assert loaded_config.check_bounds("vehicle_number", 2) == BoundsResult.VALID
     
