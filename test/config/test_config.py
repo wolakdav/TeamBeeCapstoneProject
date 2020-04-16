@@ -34,7 +34,7 @@ def test_get_set_config(empty_config):
 def test_ingest_env(monkeypatch, empty_config):
     monkeypatch.setenv("PIPELINE_USER", "test_user")
     monkeypatch.setenv("PIPELINE_PASSWD", "test_pass")
-    empty_config.ingest_env()
+    empty_config._ingest_env()
 
     assert empty_config.get_value("pipeline_user") == "test_user"
     assert empty_config.get_value("pipeline_passwd") == "test_pass"

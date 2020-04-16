@@ -76,7 +76,6 @@ def db_cli(ctran, flagged, flags, service_periods):
 # Private Functions
 
 def _create_instances(read_env_data):
-    config.load()
     try:
         if not read_env_data and os.environ["PIPELINE_ENV_DATA"]:
             read_env_data = True
@@ -84,9 +83,9 @@ def _create_instances(read_env_data):
         pass
 
     ctran = None
-    if read_env_data:
-        config.ingest_env()
-        
+    
+    config.load(read_env_data = read_env_data)
+
     user = config.get_value('pipeline_user')
     passwd = config.get_value('pipeline_passwd')
     hostname = config.get_value('pipeline_hostname')

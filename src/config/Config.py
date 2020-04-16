@@ -15,11 +15,13 @@ class Config:
     def __init__(self):
         self._data = {}
 
-    def load(self, filename="./assets/config.json", debug=False):
+    def load(self, filename="./assets/config.json", read_env_data=False, debug=False):
         with open(filename) as f:
             self._data = json.load(f)
+        if read_env_data:
+            self._ingest_env()
 
-    def ingest_env(self):
+    def _ingest_env(self):
         if "PIPELINE_USER" in os.environ:
             self._data["pipeline_user"] = os.environ["PIPELINE_USER"]
         if "PIPELINE_PASSWD" in os.environ:
