@@ -6,9 +6,7 @@ class Duplicate(Flagger):
 
 	def flag(self, row, data):
 		"""
-		Checks if bus had stopped but door haven't opened (perhaps no passengers getting on/off?).
-		To check, we check door field:
-		door: The number of times the door was opened at the stop.
+		Checks passed row/dict/object and passed full dataset, to see if there are duplicates.
 
 		Args:
 			row (Object): data row from full dataset fetched from the db
