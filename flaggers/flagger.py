@@ -3,7 +3,7 @@ from enum import Enum, auto
 
 class Flags(Enum):
   ###################################################
-  # Documentation of flags can be found in flags.txt.
+  # Documentation of flags can be found in flags.md
   ###################################################
 
   #Null flags
@@ -35,6 +35,14 @@ class Flags(Enum):
   SCHEDULE_STATUS_NULL = auto()
   TRIP_ID_NULL = auto()
 
+  #Unobserved stop flag
+  UNOBSERVED_STOP = auto()
+
+  #Unopened door flag
+  UNOPENED_DOOR = auto()
+
+  #Duplicate flag
+  DUPLICATE = auto()
 
 class Flagger(abc.ABC):
   # Name must be overwritten

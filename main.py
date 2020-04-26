@@ -5,6 +5,7 @@ from src.tables import CTran_Data
 from src.tables import Flagged_Data
 from src.tables import Flags
 from src.tables import Service_Periods
+from src.config import config
 from src.interface import ArgInterface
 
 
@@ -82,16 +83,15 @@ def _create_instances(read_env_data):
         pass
 
     ctran = None
-    if read_env_data:
-        try:
-            user = os.environ["PIPELINE_USER"]
-            passwd = os.environ["PIPELINE_PASSWD"]
-            hostname = os.environ["PIPELINE_HOSTNAME"]
-            db_name = os.environ["PIPELINE_DB_NAME"]
-        except KeyError as err:
-            print("Could not read environment data " + str(err) + "; terminating.")
-            return
+    
+    config.load(read_env_data = read_env_data)
 
+    user = config.get_value('pipeline_user')
+    passwd = config.get_value('pipeline_passwd')
+    hostname = config.get_value('pipeline_hostname')
+    db_name = config.get_value('pipeline_db_name')
+
+    if user and passwd and hostname and db_name:
         ctran = CTran_Data(user, passwd, hostname, db_name, verbose=True)
     else:
         ctran = CTran_Data(verbose=True)

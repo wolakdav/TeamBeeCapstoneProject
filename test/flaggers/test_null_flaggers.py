@@ -1,7 +1,6 @@
 from flaggers.flagger import flaggers, Flags
 import pytest
 
-
 class DataRowNull():
   def __init__(self):
     self.row_id = None
