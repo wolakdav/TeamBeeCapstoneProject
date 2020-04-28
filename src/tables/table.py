@@ -191,6 +191,38 @@ class Table(abc.ABC):
             print(string, end="")
             print(obj)
 
+    #######################################################
+
+    '''
+    Queries the C-Tran data table using the given SQL query.
+
+    :argument   a SQL query string
+    :returns    a DataFrame containing query results, or
+                None if an exception occurred.
+    '''
+    def _query_table(self, sql):
+        if self._engine is None:
+            self._print("ERROR: self._engine is None, cannot continue.")
+            return None
+
+        df = None
+        self._print(sql)
+        try:
+            df = pandas.read_sql(sql, self._engine)
+
+        except SQLAlchemyError as error:
+            print("SQLAclchemy:", error)
+            return None
+        except (ValueError, KeyError) as error:
+            print("Pandas:", error)
+            return None
+
+        if not self._check_cols(df):
+            self._print("ERROR: the columns of read data does not match the specified columns.")
+            return None
+
+        return df
+
     ###########################################################################
     # Private Methods
 

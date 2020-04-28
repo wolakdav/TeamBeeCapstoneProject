@@ -31,7 +31,7 @@ def cli(read_env_data=False):
 
     if len(sys.argv) > 1:
         ai = ArgInterface()
-        return ai.query_with_args(ctran, sys.argv[1:])
+        return ai.query_with_args(ctran, flagged, sys.argv[1:])
 
 
     options = [
