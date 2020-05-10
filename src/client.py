@@ -127,11 +127,11 @@ class _Client(IOs):
                 return False
 
             flagged_rows = []
-            # TODO: Stackoverflow is telling me iterrows is a slow way of iterrating,
-            # but i'll leave optimizing for later.
 
             skipped_rows = 0
-
+            
+            # TODO: Stackoverflow is telling me iterrows is a slow way of iterrating,
+            # but i'll leave optimizing for later.
             for row_id, row in ctran_df.iterrows():
                 month = row.service_date.month
                 year = row.service_date.year
