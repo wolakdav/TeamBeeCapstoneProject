@@ -4,6 +4,7 @@
   "portal_hostname": "localhost",
   "portal_db_name": "aperture",
   "portal_schema": "aperture",
+  "max_skipped_rows": 10,
   "user_emails": ["test@test.com"],
   "pipeline_email": "stopspot.noreply@gmail.com",
   "pipeline_email_passwd": "INVALID",
