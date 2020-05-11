@@ -176,7 +176,7 @@ class _Client(IOs):
         except Exception as err:
             now = datetime.now().strftime("%b %d %Y %H:%M:%S")
 
-            msg = "An unexpected error occured while running the pipeline on {0}. The error has been logged and the pipeline will be restarted.".format(now)
+            msg = "An unexpected error occured while running the pipeline on {0}. The error has been logged and the pipeline will be restarted unless the retry limit has been reached.".format(now)
             subject = "Pipeline Error - {0}".format(now)
 
             logger.log(msg, Severity.ERROR)
