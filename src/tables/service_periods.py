@@ -50,14 +50,11 @@ class Service_Periods(Table):
                        " WHERE ", date.strftime("'%Y-%m-%d'"),
                        " BETWEEN start_date AND end_date;"
                        ])
-        try:
-            with self._engine.connect() as con:
-                result = con.execute(sql)
-                if result.rowcount != 0:
-                    return result.first()['service_key']
-        except SQLAlchemyError as error:
-            print("SQLAlchemy: ", error)
-            return None
+        with self._engine.connect() as con:
+            result = con.execute(sql)
+            if result.rowcount != 0:
+                return result.first()['service_key']
+    
 
 
     def insert_one(self, date):
@@ -75,13 +72,9 @@ class Service_Periods(Table):
                        start_date.strftime("'%Y-%m-%d'"), ', ',
                        end_date.strftime("'%Y-%m-%d'"),
                        ") RETURNING service_key;"])
-        try:
-            with self._engine.connect() as con:
-                result = con.execute(sql)
-                return result.first()[0]
-        except SQLAlchemyError as error:
-            print("SQLAlchemy: ", error)
-            return None
+        with self._engine.connect() as con:
+            result = con.execute(sql)
+            return result.first()[0]
 
 
     def query_or_insert(self, date):
