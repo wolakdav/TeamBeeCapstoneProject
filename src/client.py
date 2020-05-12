@@ -128,7 +128,6 @@ class _Client(IOs):
             return False
 
         flagged_rows = []
-
         skipped_rows = 0
         
         # TODO: Stackoverflow is telling me iterrows is a slow way of iterrating,
