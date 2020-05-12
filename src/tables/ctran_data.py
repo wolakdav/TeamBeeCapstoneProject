@@ -80,8 +80,7 @@ class CTran_Data(Table):
     # This will create a mock CTran Table for development purposes.
     def create_table(self, ctran_sample_path="assets/"):
         if not isinstance(self._engine, Engine):
-            self._print("ERROR: self._engine is not an Engine, cannot continue.")
-            return False
+            raise SQLAlchemyError("self._engine is not an Engine, cannot continue.")
 
         csv_location = "".join([ctran_sample_path, "/ctran_trips_sample.csv"])
         self._print("Loading " + csv_location)
@@ -90,16 +89,13 @@ class CTran_Data(Table):
         sample_data = pandas.read_csv(csv_location, parse_dates=["service_date"])
 
       
-
         if not self._check_cols(sample_data):
             raise ValueError("ERROR: the columns of read data does not match the specified columns.")
             
-
         if not self._create_table_helper(sample_data):
             raise ValueError
 
         self._print("Done.")
-        return True
 
     #######################################################
 
@@ -126,8 +122,7 @@ class CTran_Data(Table):
         conn = self._engine.connect()
         self._print("Initializing table.")
         if not super().create_table():
-            self._print("ERROR: failed to create the table; cannot proceed.")
-            return False
+            raise SQLAlchemyError("failed to create the table; cannot proceed.")
 
         self._print("Writing sample data to table. This will take a few minutes.")
 

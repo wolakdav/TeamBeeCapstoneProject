@@ -2,7 +2,7 @@ import io
 import pytest
 import pandas
 from sqlalchemy import create_engine
-from sqlalchemy.exc import OperationalError
+from sqlalchemy.exc import OperationalError, SQLAlchemyError
 from sqlalchemy.engine.base import Engine
 from src.tables import CTran_Data
 
@@ -135,11 +135,14 @@ def test_creation_sql(instance_fixture):
 
 def test_create_table_assets_file_check(instance_fixture):
     instance_fixture._create_table_helper = lambda _: True
-    assert instance_fixture.create_table() == True
+
+    instance_fixture.create_table()
 
 def test_create_table_bad_engine(instance_fixture):
     instance_fixture._engine = None
-    assert instance_fixture.create_table() == False
+
+    with pytest.raises(SQLAlchemyError):
+        instance_fixture.create_table()
 
 def test_create_table_bad_filepath(monkeypatch, instance_fixture):
     def custom_read_csv(csv_location, parse_dates):
@@ -170,7 +173,9 @@ def test_create_table_helper_fails(monkeypatch, instance_fixture):
 def test_create_table_helper_super_fails(monkeypatch, custom_connect, instance_fixture):
     instance_fixture._engine.connect = custom_connect
     instance_fixture.create_schema = lambda: False
-    assert instance_fixture._create_table_helper(pandas.DataFrame) == False
+
+    with pytest.raises(SQLAlchemyError):
+        instance_fixture._create_table_helper(pandas.DataFrame)
 
 def test_create_table_helper_to_sql_fails(custom_connect, sample_df, instance_fixture):
     instance_fixture.create_schema = lambda: True
