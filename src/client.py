@@ -16,6 +16,8 @@ from flaggers.flagger import flaggers
 from src.logger import logger
 from src.logger import Severity
 from src.notif import notif
+from time import sleep
+import sys
 
 class _Option():
     def __init__(self, msg, func_pointer):
@@ -118,74 +120,61 @@ class _Client(IOs):
     # can be Date instances or strings in format "YYYY/MM/DD". If no dates are
     # supplied, this will prompt the user for them.
     def process_data(self, start_date=None, end_date=None):
-        try:
-            self.print("Starting data processing pipeline.")
-            start_date, end_date = self._get_date_range(start_date, end_date)
-            ctran_df = self.ctran.query_date_range(start_date, end_date)
-            if ctran_df is None:
-                self.print("ERROR: the supplied dates were unable to be gathered from CTran data.")
-                return False
+        self.print("Starting data processing pipeline.")
+        start_date, end_date = self._get_date_range(start_date, end_date)
+        ctran_df = self.ctran.query_date_range(start_date, end_date)
+        if ctran_df is None:
+            self.print("ERROR: the supplied dates were unable to be gathered from CTran data.")
+            return False
 
-            flagged_rows = []
+        flagged_rows = []
 
-            skipped_rows = 0
-            
-            # TODO: Stackoverflow is telling me iterrows is a slow way of iterrating,
-            # but i'll leave optimizing for later.
-            for row_id, row in ctran_df.iterrows():
-                month = row.service_date.month
-                year = row.service_date.year
-                service_key = self.service_periods.query_or_insert(month, year)
-
-                if config.get_value('max_skipped_rows'):
-                    if skipped_rows > config.get_value('max_skipped_rows'):
-                        raise Exception("Exceeded maximum number of skipped service rows.")
-
-                # If this fails, it's very likely a sqlalchemy error.
-                # e.g. not able to connect to db.
-                if not service_key:
-                    self.print("ERROR: cannot find or create new service_key, skipping.")
-                    skipped_rows +=1
-                    continue
-
-                flags = set()
-                for flagger in flaggers:
-                    try:
-                        # Duplicate flagger requires a special call.
-                        if flagger.name == "Duplicate":
-                            flags.update(flagger.flag(row_id, ctran_df))
-                        else:
-                            flags.update(flagger.flag(row))
-                    except Exception as e:
-                        self.print("WARNING: error in flagger {}. Skipping.\n{}"
-                            .format(flagger.name, e))
-
-                date = row["service_date"]
-                date = "".join([str(date.year), "/", str(date.month), "/", str(date.day)])
-                for flag in flags:
-                    flagged_rows.append([
-                        row_id,
-                        service_key,
-                        int(flag),
-                        date
-                    ])
-
-            self.flagged.write_table(flagged_rows)
-            self.print("Done.")
-            return True
-        except Exception as err:
-            now = datetime.now().strftime("%b %d %Y %H:%M:%S")
-
-            msg = "An unexpected error occured while running the pipeline on {0}. The error has been logged and the pipeline will be restarted unless the retry limit has been reached.".format(now)
-            subject = "Pipeline Error - {0}".format(now)
-
-            logger.log(msg, Severity.ERROR)
-            logger.log(err, Severity.ERROR)
-
-            notif.email(subject , msg)
-
-            raise err
+        skipped_rows = 0
         
+        # TODO: Stackoverflow is telling me iterrows is a slow way of iterrating,
+        # but i'll leave optimizing for later.
+        for row_id, row in ctran_df.iterrows():
+            month = row.service_date.month
+            year = row.service_date.year
+            service_key = self.service_periods.query_or_insert(month, year)
+
+            if config.get_value('max_skipped_rows'):
+                if skipped_rows > config.get_value('max_skipped_rows'):
+                    raise Exception("Exceeded maximum number of skipped service rows.")
+
+            # If this fails, it's very likely a sqlalchemy error.
+            # e.g. not able to connect to db.
+            if not service_key:
+                self.print("ERROR: cannot find or create new service_key, skipping.")
+                skipped_rows +=1
+                continue
+
+            flags = set()
+            for flagger in flaggers:
+                try:
+                    # Duplicate flagger requires a special call.
+                    if flagger.name == "Duplicate":
+                        flags.update(flagger.flag(row_id, ctran_df))
+                    else:
+                        flags.update(flagger.flag(row))
+                except Exception as e:
+                    self.print("WARNING: error in flagger {}. Skipping.\n{}"
+                        .format(flagger.name, e))
+
+            date = row["service_date"]
+            date = "".join([str(date.year), "/", str(date.month), "/", str(date.day)])
+            for flag in flags:
+                flagged_rows.append([
+                    row_id,
+                    service_key,
+                    int(flag),
+                    date
+                ])
+
+        self.flagged.write_table(flagged_rows)
+        self.print("Done.")
+        return True
+      
 
     ###########################################################
 
@@ -206,17 +195,33 @@ class _Client(IOs):
     
     # This method will process the next day after the latest processed day.
     def process_next_day(self):
-        start_date = self.flagged.get_latest_day()
-        if start_date is None:
-            self.print("ERROR: no prior date processed; cannot continue from the last processed day.")
-            return False
-        self.print("Last processed day: " + str(start_date))
-        start_date = start_date + timedelta(days=1)
-        self.print("Processing from:  " + str(start_date))
-        end_date = start_date
-        self.print("\t   until: " + str(end_date))
-        return self.process_data(start_date, end_date)
+        logger.start()
+        try:
+            start_date = self.flagged.get_latest_day()
+            if start_date is None:
+                self.print("ERROR: no prior date processed; cannot continue from the last processed day.")
+                return False
+            self.print("Last processed day: " + str(start_date))
+            start_date = start_date + timedelta(days=1)
+            self.print("Processing from:  " + str(start_date))
+            end_date = start_date
+            self.print("\t   until: " + str(end_date))
+            return self.process_data(start_date, end_date)
+            
+        except Exception as err:            
+            now = datetime.now().strftime("%b %d %Y %H:%M:%S")
 
+            msg = "An unexpected critical error occured while running the pipeline on {0}.\n The contents of the error are listed below:\n\n {1} \n The error has been logged and the pipeline will be restarted unless the retry limit has been reached. ".format(now, err)
+            subject = "Pipeline Error - {0}".format(now)
+
+            logger.log(msg, Severity.ERROR)
+            logger.log(err, Severity.ERROR)
+
+            notif.email(subject , msg)
+
+            sleep(10)
+            sys.exit(2)
+            
     ###########################################################
 
     def reprocess(self, start_date=None, end_date=None):

@@ -87,13 +87,8 @@ class CTran_Data(Table):
         self._print("Loading " + csv_location)
 
         sample_data = None
-        # try:
         sample_data = pandas.read_csv(csv_location, parse_dates=["service_date"])
 
-        # except (FileNotFoundError, ValueError) as error:
-        #     print("Pandas:", error)
-        #     print("Cannot continue table creation, cancelling.")
-        #     return False
 
         if not self._check_cols(sample_data):
             raise ValueError("ERROR: the columns of read data does not match the specified columns.")
