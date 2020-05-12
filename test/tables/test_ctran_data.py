@@ -2,6 +2,7 @@ import io
 import pytest
 import pandas
 from sqlalchemy import create_engine
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.engine.base import Engine
 from src.tables import CTran_Data
 
@@ -145,19 +146,26 @@ def test_create_table_bad_filepath(monkeypatch, instance_fixture):
         raise FileNotFoundError
 
     monkeypatch.setattr("pandas.read_csv", custom_read_csv)
-    assert instance_fixture.create_table() == False
+    
+    with pytest.raises(FileNotFoundError):
+        instance_fixture.create_table()
 
 def test_create_table_invalid_cols(monkeypatch, instance_fixture):
     test_list = [["a", "b", "c", "d", "e"], ["AA", "BB", "CC", "DD", "EE"]]
     bad_df = pandas.DataFrame(test_list)
     monkeypatch.setattr("pandas.read_csv", lambda _, parse_dates: bad_df)
-    assert instance_fixture.create_table() == False
+    
+    with pytest.raises(ValueError):
+        instance_fixture.create_table()
+
 
 def test_create_table_helper_fails(monkeypatch, instance_fixture):
     monkeypatch.setattr("pandas.read_csv", lambda _, parse_dates: pandas.DataFrame)
     instance_fixture._check_cols = lambda _: True
     instance_fixture._create_table_helper = lambda _: False
-    assert instance_fixture.create_table() == False
+    
+    with pytest.raises(ValueError):
+        instance_fixture.create_table()
 
 def test_create_table_helper_super_fails(monkeypatch, custom_connect, instance_fixture):
     instance_fixture._engine.connect = custom_connect
@@ -167,9 +175,13 @@ def test_create_table_helper_super_fails(monkeypatch, custom_connect, instance_f
 def test_create_table_helper_to_sql_fails(custom_connect, sample_df, instance_fixture):
     instance_fixture.create_schema = lambda: True
     instance_fixture._engine.connect = custom_connect
-    assert instance_fixture._create_table_helper(sample_df()) == False
+    
+    with pytest.raises(ValueError):
+        instance_fixture._create_table_helper(sample_df())
 
 def test_create_table_helper_sqlalchemy_fail(custom_connect, instance_fixture):
     instance_fixture._engine.connect = custom_connect
     instance_fixture.create_schema = lambda: True
-    assert instance_fixture.create_table() == False
+    
+    with pytest.raises(OperationalError):
+        instance_fixture.create_table() == False

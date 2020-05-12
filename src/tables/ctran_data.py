@@ -87,20 +87,19 @@ class CTran_Data(Table):
         self._print("Loading " + csv_location)
 
         sample_data = None
-        try:
-            sample_data = pandas.read_csv(csv_location, parse_dates=["service_date"])
+        # try:
+        sample_data = pandas.read_csv(csv_location, parse_dates=["service_date"])
 
-        except (FileNotFoundError, ValueError) as error:
-            print("Pandas:", error)
-            print("Cannot continue table creation, cancelling.")
-            return False
+        # except (FileNotFoundError, ValueError) as error:
+        #     print("Pandas:", error)
+        #     print("Cannot continue table creation, cancelling.")
+        #     return False
 
         if not self._check_cols(sample_data):
-            self._print("ERROR: the columns of read data does not match the specified columns.")
-            return False
+            raise ValueError("ERROR: the columns of read data does not match the specified columns.")
 
         if not self._create_table_helper(sample_data):
-            return False
+            raise ValueError
 
         self._print("Done.")
         return True
@@ -127,29 +126,22 @@ class CTran_Data(Table):
 
     def _create_table_helper(self, sample_data):
         self._print("Connecting to DB.")
-        try:
-            conn = self._engine.connect()
-            self._print("Initializing table.")
-            if not super().create_table():
-                self._print("ERROR: failed to create the table; cannot proceed.")
-                return False
-
-            self._print("Writing sample data to table. This will take a few minutes.")
-
-            sample_data.to_sql(
-                    self._table_name,
-                    self._engine,
-                    if_exists = "append",
-                    index = False,
-                    chunksize = self._chunksize,
-                    schema = self._schema,
-                )
-
-        except SQLAlchemyError as error:
-            print("SQLAclchemy:", error)
+        conn = self._engine.connect()
+        self._print("Initializing table.")
+        if not super().create_table():
+            self._print("ERROR: failed to create the table; cannot proceed.")
             return False
-        except (KeyError, ValueError) as error:
-            print("Pandas:", error)
-            return False
+
+        self._print("Writing sample data to table. This will take a few minutes.")
+
+        sample_data.to_sql(
+                self._table_name,
+                self._engine,
+                if_exists = "append",
+                index = False,
+                chunksize = self._chunksize,
+                schema = self._schema,
+            )
+
 
         return True

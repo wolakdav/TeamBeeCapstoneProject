@@ -145,7 +145,7 @@ def test_check_cols_happy(sample_df, instance_fixture):
     assert instance_fixture._check_cols(sample_df) == True
 
 def test_check_cols_sad(instance_fixture):
-    assert instance_fixture._check_cols(pandas.DataFrame()) == False
+    instance_fixture._check_cols(pandas.DataFrame())
 
 def test_get_full_table_happy(monkeypatch, custom_read_sql, instance_fixture):
     monkeypatch.setattr("pandas.read_sql", custom_read_sql)
