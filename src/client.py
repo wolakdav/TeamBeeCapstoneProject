@@ -209,13 +209,11 @@ class _Client(IOs):
             
         except Exception as err:            
             now = datetime.now().strftime("%b %d %Y %H:%M:%S")
-
             msg = "An unexpected critical error occured while running the pipeline on {0}.\n The contents of the error are listed below:\n\n {1} \n The error has been logged and the pipeline will be restarted unless the retry limit has been reached. ".format(now, err)
             subject = "Pipeline Error - {0}".format(now)
 
             logger.log(msg, Severity.ERROR)
             logger.log(err, Severity.ERROR)
-
             notif.email(subject , msg)
 
             sleep(10)
