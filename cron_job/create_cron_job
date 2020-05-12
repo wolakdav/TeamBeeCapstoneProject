@@ -1,0 +1,6 @@
+#!/bin/bash
+
+crontab < $PWD/cron_job_params
+
+echo -e "-------------------Crontab Contents Below-------------------\n"
+crontab -l

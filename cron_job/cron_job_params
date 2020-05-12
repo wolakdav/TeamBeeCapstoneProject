@@ -1,0 +1,14 @@
+# .---------------- minute (0 - 59)
+# | .------------- hour (0 - 23)
+# | | .---------- day of month (1 - 31)
+# | | | .------- month (1 - 12)
+# | | | | .---- day of week (0 - 6) (Sunday=0 or 7)
+# | | | | |
+# * * * * * command
+
+# A little explanation of the below command. This will create and run a new container in the background with the stop_spot image. 
+# Once the container finishes its job the container will stop and delete the container. Within the Dockerfile the default command
+# is to run the application with the --daily flag and so this command will process the next days data at 4am everyday by default.
+
+0 4 * * * docker run -d --rm stop_spot
+
