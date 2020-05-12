@@ -105,14 +105,10 @@ class Flagged_Data(Table):
                        "FROM ", self._schema, ".", self._table_name,
                        ";"])
         self._print(sql)
-        try:
-            self._print("Connecting to DB.")
-            conn = self._engine.connect()
-            value = conn.execute(sql)
-        except SQLAlchemyError as error:
-            print("SQLAlchemyError: ", error)
-            return None
-        
+        self._print("Connecting to DB.")
+        conn = self._engine.connect()
+        value = conn.execute(sql)
+       
         if value is not None:
             self._print("Done")
             return value.first()[0]
@@ -148,13 +144,11 @@ class Flagged_Data(Table):
         sql = "".join(["DELETE FROM ", self._schema, ".", self._table_name,
                        " WHERE service_date IN (", values_sql, ");"])
         self._print(sql)
-        try:
-            self._print("Connecting to DB.")
-            conn = self._engine.connect()
-            conn.execute(sql)
-        except SQLAlchemyError as error:
-            print("SQLAlchemyError: ", error)
-            return False
+
+        self._print("Connecting to DB.")
+        conn = self._engine.connect()
+        conn.execute(sql)
+
 
         self._print("Done")
         return True
@@ -228,12 +222,9 @@ class Flagged_Data(Table):
             " WHERE flag_id=", str(flag.value), ";"
         ])
 
-        try:
-            with self._engine.connect() as con:
-                con.execute(sql)
-        except SQLAlchemyError as error:
-            print("SQLAlchemyError: ", error)
-            return False
+        with self._engine.connect() as con:
+            con.execute(sql)
+
         self._print("Done")
         return True
 

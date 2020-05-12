@@ -3,6 +3,7 @@ import datetime
 import pytest
 import pandas
 from sqlalchemy import create_engine
+from sqlalchemy.exc import OperationalError
 from src.tables import Flagged_Data
 from enum import IntEnum
 import flaggers.flagger as flagger
@@ -99,7 +100,8 @@ def test_delete_date_range_invalid_inputs(instance_fixture):
 
 def test_delete_date_range_bad_connection(instance_fixture):
     # Since the default engine is already terrible, no changes are needed.
-    assert instance_fixture.delete_date_range("2020/1/1") == False
+    with pytest.raises(OperationalError):
+        instance_fixture.delete_date_range("2020/1/1")
 
 def test_get_date_range(instance_fixture):
     assert instance_fixture._get_date_range("2020/1/1") == [datetime.datetime(2020, 1, 1, 0, 0)]
