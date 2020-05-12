@@ -3,6 +3,7 @@ import pytest
 import pandas
 from sqlalchemy import create_engine
 from sqlalchemy.engine.base import Engine
+from sqlalchemy.exc import OperationalError
 from src.tables import Table
 
 g_is_valid = None
@@ -168,14 +169,17 @@ def test_get_full_table_mismatch_cols(monkeypatch, custom_read_sql, instance_fix
 def test_get_full_table_sqlalchemy_error(instance_fixture):
     # Since this table is fake, SQLalchemy will not be able to find it, which
     # will cause this to fail.
-    assert instance_fixture.get_full_table() is None
+    
+    with pytest.raises(OperationalError):
+        instance_fixture.get_full_table()
 
 def test_get_full_table_read_sql_exception(monkeypatch, instance_fixture):
     def custom_read_sql(sql, engine, index_col):
         raise KeyError
 
     monkeypatch.setattr("pandas.read_sql", custom_read_sql)
-    assert instance_fixture.get_full_table() == None
+    with pytest.raises(KeyError):
+        instance_fixture.get_full_table()
 
 def test_create_schema_verify_sql(custom_connect, instance_fixture):
     global g_is_valid
@@ -188,7 +192,8 @@ def test_create_schema_verify_sql(custom_connect, instance_fixture):
 def test_create_schema_sqlalchemy_error(instance_fixture):
     # Since this table is fake, SQLalchemy will not be able to find it, which
     # will cause this to fail.
-    assert instance_fixture.create_schema() == False
+    with pytest.raises(OperationalError):
+        assert instance_fixture.create_schema() == False
 
 def test_create_schema_bad_engine(instance_fixture):
     instance_fixture._engine = None
@@ -205,7 +210,8 @@ def test_delete_schema_verify_sql(custom_connect, instance_fixture):
 def test_delete_schema_sqlalchemy_error(instance_fixture):
     # Since this table is fake, SQLalchemy will not be able to find it, which
     # will cause this to fail.
-    assert instance_fixture.delete_schema() == False
+    with pytest.raises(OperationalError):
+        instance_fixture.delete_schema()
 
 def test_delete_schema_bad_engine(instance_fixture):
     instance_fixture._engine = None
@@ -223,7 +229,8 @@ def test_create_table_schema_fails(instance_fixture):
     # Since the engine contains logic errors, it will pass the
     # isinstance(Engine) check, but create_schema will fail during the
     # credentials check.
-    assert instance_fixture.create_table() == False
+    with pytest.raises(OperationalError):
+        assert instance_fixture.create_table() == False
 
 def test_create_table_bad_engine(instance_fixture):
     instance_fixture._engine = None
@@ -231,7 +238,9 @@ def test_create_table_bad_engine(instance_fixture):
 
 def test_create_table_sqlalchemy_error(instance_fixture):
     instance_fixture.create_schema = lambda: True
-    assert instance_fixture.create_table() == False
+
+    with pytest.raises(OperationalError):
+        instance_fixture.create_table()
 
 def test_delete_table_verify_sql(custom_connect, instance_fixture):
     global g_is_valid
@@ -248,7 +257,8 @@ def test_delete_table_bad_engine(instance_fixture):
 def test_delete_table_sqlalchemy_error(instance_fixture):
     # Since this table is fake, SQLalchemy will not be able to find it, which
     # will cause this to fail.
-    assert instance_fixture.delete_table() == False
+    with pytest.raises(OperationalError):
+        instance_fixture.delete_table()
 
 
 def test_write_table(monkeypatch, instance_fixture):

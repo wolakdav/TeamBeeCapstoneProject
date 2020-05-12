@@ -59,16 +59,9 @@ class Table(IOs, abc.ABC):
         df = None
         sql = "".join(["SELECT * FROM ", self._schema, ".", self._table_name, ";"])
         self._print(sql)
-        try:
-            df = pandas.read_sql(sql, self._engine, index_col=self._index_col)
-
-        except SQLAlchemyError as error:
-            print("SQLAclchemy:", error)
-            return None
-        except (KeyError, ValueError) as error:
-            print("Pandas:", error)
-            return None
         
+        df = pandas.read_sql(sql, self._engine, index_col=self._index_col)
+
         if not self._check_cols(df):
             self._print("ERROR: the columns of read data does not match the specified columns.")
             return None
@@ -84,14 +77,11 @@ class Table(IOs, abc.ABC):
 
         self._print("Connecting to DB.")
         sql = "".join(["CREATE SCHEMA IF NOT EXISTS ", self._schema, ";"])
-        try:
-            conn = self._engine.connect()
-            self._print(sql)
-            conn.execute(sql)
 
-        except SQLAlchemyError as error:
-            print("SQLAclchemy:", error)
-            return False
+        conn = self._engine.connect()
+        self._print(sql)
+        conn.execute(sql)
+
 
         self._print("Done.")
         return True
@@ -105,14 +95,10 @@ class Table(IOs, abc.ABC):
 
         self._print("Connecting to DB.")
         sql = "".join(["DROP SCHEMA IF EXISTS ", self._schema, " CASCADE;"])
-        try:
-            conn = self._engine.connect()
-            self._print(sql)
-            conn.execute(sql)
-
-        except SQLAlchemyError as error:
-            print("SQLAclchemy:", error)
-            return False
+        
+        conn = self._engine.connect()
+        self._print(sql)
+        conn.execute(sql)
 
         self._print("Done.")
         return True
@@ -129,14 +115,10 @@ class Table(IOs, abc.ABC):
             return False
 
         self._print("Connecting to DB.")
-        try:
-            conn = self._engine.connect()
-            self._print(self._creation_sql)
-            conn.execute(self._creation_sql)
 
-        except SQLAlchemyError as error:
-            print("SQLAclchemy:", error)
-            return False
+        conn = self._engine.connect()
+        self._print(self._creation_sql)
+        conn.execute(self._creation_sql)
 
         self._print("Done.")
         return True
@@ -151,14 +133,11 @@ class Table(IOs, abc.ABC):
 
         self._print("Connecting to DB.")
         sql = "".join(["DROP TABLE IF EXISTS " + self._schema + "." + self._table_name + ";"])
-        try:
-            conn = self._engine.connect()
-            self._print(sql)
-            conn.execute(sql)
+        
+        conn = self._engine.connect()
+        self._print(sql)
+        conn.execute(sql)
 
-        except SQLAlchemyError as error:
-            print("SQLAclchemy:", error)
-            return False
 
         self._print("Done.")
         return True
@@ -219,12 +198,9 @@ class Table(IOs, abc.ABC):
                                ", ".join([s for s in conflict_columns]))
             sql += "".join([" ON CONFLICT ", conflict_columns, " DO NOTHING;"])
 
-        try:
-            con = self._engine.connect()
-            con.execute(sql)
-        except SQLAlchemyError as error:
-            print("SQLAlchemyError: ", error)
-            return False
+        con = self._engine.connect()
+        con.execute(sql)
+
         self._print("Done")
         return True
 
@@ -256,15 +232,9 @@ class Table(IOs, abc.ABC):
 
         df = None
         self._print(sql)
-        try:
-            df = pandas.read_sql(sql, self._engine, index_col=self._index_col)
+        
+        df = pandas.read_sql(sql, self._engine, index_col=self._index_col)
 
-        except SQLAlchemyError as error:
-            print("SQLAclchemy:", error)
-            return None
-        except (ValueError, KeyError) as error:
-            print("Pandas:", error)
-            return None
 
         if not self._check_cols(df):
             self._print("ERROR: the columns of read data does not match the specified columns.")
