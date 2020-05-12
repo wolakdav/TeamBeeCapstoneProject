@@ -89,9 +89,11 @@ class CTran_Data(Table):
         sample_data = None
         sample_data = pandas.read_csv(csv_location, parse_dates=["service_date"])
 
+      
 
         if not self._check_cols(sample_data):
             raise ValueError("ERROR: the columns of read data does not match the specified columns.")
+            
 
         if not self._create_table_helper(sample_data):
             raise ValueError
@@ -138,5 +140,6 @@ class CTran_Data(Table):
                 schema = self._schema,
             )
 
+      
 
         return True
